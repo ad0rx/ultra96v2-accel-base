@@ -1,0 +1,15 @@
+{% extends "!footer.html" %}
+{#
+  Extend the sphinx_rtd_theme base footer
+  Override the extrafooter block
+  - Include support for a footer logo
+#}
+
+  {%- block extrafooter %} 
+
+    {% if footer_logo %}
+      <a href="https://www.avnet.com/"  target="_blank"><img src="{{ pathto('_static/' + footer_logo_filename, 1) }}" class="logo" align="left" alt="Avnet Footer Logo" style="height:25px;"/></a>
+    {% endif %}
+
+  {% endblock %}
+

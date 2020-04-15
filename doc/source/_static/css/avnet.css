@@ -1,0 +1,148 @@
+/** css/avnet.css **/
+
+/* This line is theme specific - it includes the base theme CSS */
+@import 'theme.css';  /* base sphinx_rtd_theme */
+
+/* Define Avnet Specific Theme Colors
+ * ----------------------------------
+ * Green: 			#41c363; (text=white)
+ * Green (web): 	#349c4f; (text=white)
+ * Light Grey: 		#e2e3e4; (text=black)
+ * Light Grey 2:	#b8bbbd; (text=black)
+ * Grey:			#72777d; (text=white)
+ * Dark Grey:		#1e252b; (text=white)
+ * Blue:			#039be5; (text=white)
+ * Yellow:			#ffd100; (text=black)
+ */
+:root{
+	--avnet-green: #41c363;
+	--avnet-green-web: #349c4f;
+	--avnet-light-grey: #e2e3e4;
+	--avnet-light-grey-2: #b8bbbd;
+	--avnet-grey: #72777d;
+	--avnet-dark-grey: #1e252b;
+	--avnet-blue: #039be5;
+	--avnet-yellow: #ffd100;
+	--avnet-black: #000000;
+	--avnet-white: #ffffff;
+}
+
+
+body {
+    /* Override body definitions */
+    background: var(--avnet-white);
+    color: var(--avnet-black)
+}
+
+/* Override h1, h2 */
+h1, h2 {
+	/* Avnet Green (web) */
+	color: var(--avnet-green-web)
+}
+
+/* Override the main document settings for body */
+.wy-body-for-nav {
+    background: var(--avnet-white);
+    color: var(--avnet-black)
+}
+
+/* Override the main nav content settings */
+.wy-nav-content {
+	background: var(--avnet-white);
+    color: var(--avnet-black)
+}
+
+/* Override the nav content wrap color */
+.wy-nav-content-wrap {
+	background: var(--avnet-light-grey);
+}
+
+/* Override the side-bar background color */
+.wy-nav-side {
+	background: var(--avnet-dark-grey);
+	color: var(--avnet-white);
+}
+
+/* Override the background color of the navbar top section */
+.wy-side-nav-search, .wy-nav-top {
+	/* Avnet Green defined in the corporate styling guide */
+    /* is not what's used on the Avnet home page. */
+    background: var(--avnet-green-web);
+    color: var(--avnet-white)
+}
+
+/* Override the top level navbar item hover style */
+/* This overrides the H1 Sphinx Document Title */
+.wy-menu.wy-menu-vertical li.toctree-l1>a:hover {
+	background: var(--avnet-dark-grey);
+    color: var(--avnet-green-web);
+    cursor: pointer
+}
+
+.wy-menu.wy-menu-vertical p.caption {
+	background: var(--avnet-grey);
+	color: var(--avnet-white)
+}
+
+/* Override the currently selected level 1 nav item style */
+/* Add a black background with white text to selected section */
+.wy-menu.wy-menu-vertical li.toctree-l1.current>a {
+/*	background: var(--avnet-grey);
+    color: var(--avnet-white);
+*/
+	background: var(--avnet-green-web);
+	color: var(--avnet-white)
+}
+
+/* Override the currently expanded section selections underneath the level 1 nave style */
+.wy-menu.wy-menu-vertical li [class~="toctree-l2"].current>a.reference.internal,
+.wy-menu.wy-menu-vertical li [class~="toctree-l3"].current>a.reference.internal,
+.wy-menu.wy-menu-vertical li [class~="toctree-l4"].current>a.reference.internal {
+/*	background: var(--avnet-grreen-web);
+    color: var(--avnet-white);
+*/
+	background: var(--avnet-white);
+	color: var(--avnet-black)
+}
+
+/* Override the currently expanded section */
+.wy-menu.wy-menu-vertical li [class~="toctree-l2"] a:hover,
+.wy-menu.wy-menu-vertical li [class~="toctree-l2"].current a:hover
+ {
+	background: var(--avnet-blue);
+	color: var(--avnet-white)
+}
+
+/* Override list element colors */
+.rst-content dl:not(.docutils) dt {
+    line-height: normal;
+    background: var(--avnet-light-grey); /*#e7f2fa;*/
+    color: var(--avnet-green-web); /*#2980B9;*/
+    border-top: solid 3px var(--avnet-dark-grey); /*#6ab0de;*/
+}
+
+/* Override list element label colors */
+.rst-content .guilabel {
+    border: 1px solid #7fbbe3;
+    background: var(--avnet-light-grey); /*#e7f2fa;*/
+}
+
+/* Override basic anchor link colors */
+a {
+    color: var(--avnet-green-web); /*#2980B9;*/
+    text-decoration: none;
+    cursor: pointer
+}
+
+a:visited {
+    color: var(--avnet-green-web); /*#9B59B6*/
+}
+
+a:hover {
+    color: var(--avnet-black); /*#3091d1*/
+}
+
+/* Specifically override the visited link color for the home page icon */
+.wy-side-nav-search a:visited {
+	color: var(--avnet-white);
+}

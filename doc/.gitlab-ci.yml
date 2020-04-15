@@ -1,0 +1,12 @@
+#image: sphinx:avnet
+
+#pages:
+#  script:
+#  - sphinx-build -b html source public
+#  artifacts:
+#    paths:
+#      - public
+#  only:
+#  - master
+#  tags:
+#  - pages
