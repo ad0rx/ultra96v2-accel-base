@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'sphinx-rtd-example_avnet-xilinx'
+project = 'ultra96v2-accel-base'
 copyright = '2020, Avnet'
 author = 'Avnet'
 
@@ -52,7 +52,7 @@ html_static_path = ['_static']
 
 # -- HTML Custom Style Sheets
 html_css_files = [
-	'css/avnet.css',
+        'css/avnet.css',
 ]
 
 # -- HTML Theme Options ------------------------------------------------------
@@ -80,8 +80,8 @@ html_show_sphinx = True
 
 # -- Set Custom Extended Template Variables
 html_context = {
-	'second_logo': True,
-	'second_logo_filename': "320px-Xilinx_logo_2008.svg.png",
-	'footer_logo' : True,
-	'footer_logo_filename': "Avnet_logo_tagline_rgb_300.png",
+        'second_logo': True,
+        'second_logo_filename': "320px-Xilinx_logo_2008.svg.png",
+        'footer_logo' : True,
+        'footer_logo_filename': "Avnet_logo_tagline_rgb_300.png",
 }
