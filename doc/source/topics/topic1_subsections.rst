@@ -1,34 +1,49 @@
 Environment
 ###########
 
-edit the bin/setup.sh script to suit
-source the bin/setup.sh script to configure environment
- psource to source all tool settings
- pa pop all dirs off directory stack
- pws cd to project root directory
+| edit the bin/setup.sh script to suit
+| source the bin/setup.sh script to configure environment
+|  psource to source all tool settings
+|  pa pop all dirs off directory stack
+|  pws cd to project root directory
 
 
 Vivado Project
 ##############
 
-VIO LEDs
-JTAG to AXI
-VIO PL Reset
+| bin/gen-vivado-project.sh
+|  uses ultra96v2-accel-base-bd.tcl
+
+| install board files
+| VIO LEDs
+| JTAG to AXI
+| VIO PL Reset
+
+| set_property pfm_name {vendor:boardid:name:rev} [current_project]
+| see output of validate_platform -verbose to see fields
+| or use list_property_value and list_property commands
+
+| Needed to generate output products in OOC in order to get
+| write_hw_platform command to complete sucessfully
+
+| 'name' fields in the xsa appear to be set by the file name given for
+| xsa file
 
 
 
 PetaLinux Project
 #################
 
+| disable 96boards-sensors arduino-tools issue
 
-
+| build sd card img file for rufus
 
 
 
 Vitis Project
 #############
 
-
+| Install board files for u96
 
 
 .. ****************
