@@ -27,5 +27,6 @@ cd ${G_VIVADO_PROJECT_DIR}
 # See bin/ultra96v2-accel-base-bd.tcl for details
 #vivado -source ${PWS}/bin/ultra96v2-accel-base-bd.tcl
 vivado -mode batch -source ${PWS}/bin/ultra96v2-accel-base-bd.tcl
+#vivado -mode tcl -source ${PWS}/bin/ultra96v2-accel-base-bd.tcl
 
 echo "${ME}: Exit"

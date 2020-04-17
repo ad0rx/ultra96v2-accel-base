@@ -1069,80 +1069,45 @@ proc create_root_design { parentCell } {
 
 create_root_design ""
 
-# TODO update path to be relative
+# Begin Accel Platform Stuff
+set pws           $::env(PWS)
+set proj          $::env(PROJ)
+set pfm_dir       $::env(G_PFM_DIR)
+set xsa_file_name $::env(G_XSA_FILE_NAME)
+set board_id      "ultra96v2"
+set bd_file       "myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd"
+set wrapper_file  "myproj/project_1.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v"
+set dynamic_postlink_file "${pws}/bin/dynamic_postlink.tcl"
 
-# Enable platform interfacs
-#set_property pfm_name design_1 [get_files {myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd}]
-set_property PFM_NAME "avnet:ultra96v2:ultra96v2-accel-base:1.0" \
-    [get_files myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd]
+# Enable platform interfaces
+set_property PFM_NAME "avnet:${board_id}:${proj}:1.0" \
+    [get_files ${bd_file}]
 
-# Already done above
-#set_property \
-#    PFM.AXI_PORT { \
-#		       M_AXI_HPM0_FPD {memport "M_AXI_GP"  sptag "" memory ""} \
-#		       M_AXI_HPM1_FPD {memport "M_AXI_GP"  sptag "" memory ""} \
-#		       S_AXI_HPC0_FPD {memport "S_AXI_HPC" sptag "" memory ""} \
-#		       S_AXI_HPC1_FPD {memport "S_AXI_HPC" sptag "" memory ""} \
-#		       S_AXI_HP0_FPD  {memport "S_AXI_HP"  sptag "" memory ""} \
-#		       S_AXI_HP1_FPD  {memport "S_AXI_HP"  sptag "" memory ""} \
-#		       S_AXI_HP2_FPD  {memport "S_AXI_HP"  sptag "" memory ""} \
-#		       S_AXI_HP3_FPD  {memport "S_AXI_HP"  sptag "" memory ""} \
-#		   } [get_bd_cells /zynq_ultra_ps_e_0]
-
+# UG1393 CH52
 set_property platform.design_intent.embedded true        [current_project]
 set_property platform.design_intent.server_managed false [current_project]
 set_property platform.design_intent.external_host false  [current_project]
 set_property platform.design_intent.datacenter false     [current_project]
 set_property platform.default_output_type "sd_card"      [current_project]
-
-#set_property platform.name "ultra96v2-accel-base"       \
-#    [get_files myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd]
-
-set pws $::env(PWS)
-set_property platform.post_sys_link_tcl_hook ${pws}/bin/dynamic_postlink.tcl [current_project]
+set_property platform.post_sys_link_tcl_hook ${dynamic_postlink_file} [current_project]
 
 regenerate_bd_layout
 validate_bd_design -force
 save_bd_design
 
-# Launch OOC Synthesis for BD objects
-#catch { config_ip_cache -export [get_ips -all design_1_axi_intc_0_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_clk_wiz_0_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_proc_sys_reset_0_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_proc_sys_reset_1_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_proc_sys_reset_2_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_proc_sys_reset_3_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_proc_sys_reset_4_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_zynq_ultra_ps_e_0_0] }
-#catch { config_ip_cache -export [get_ips -all design_1_auto_pc_0] }
-
 # Trying to do this programmatically so that I can add arbitrary IP
 # later, and still have this portion of the script work
 set l_ips [get_ips -all]
 foreach ip $l_ips {
-
     catch { config_ip_cache -export $ip }
-
 }
 
-export_ip_user_files -of_objects                                        \
-    [get_files myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd] \
+export_ip_user_files -of_objects                                      \
+    [get_files ${bd_file}] \
     -no_script -sync -force -quiet
 
 create_ip_run [get_files -of_objects [get_fileset sources_1]          \
-		   myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd]
-
-#launch_runs -jobs 4 {                                                 \
-#			  design_1_axi_intc_0_0_synth_1               \
-#			  design_1_clk_wiz_0_0_synth_1                \
-#			  design_1_proc_sys_reset_0_0_synth_1         \
-#			  design_1_proc_sys_reset_1_0_synth_1         \
-#			  design_1_proc_sys_reset_2_0_synth_1         \
-#			  design_1_proc_sys_reset_3_0_synth_1         \
-#			  design_1_proc_sys_reset_4_0_synth_1         \
-#			  design_1_zynq_ultra_ps_e_0_0_synth_1        \
-#			  design_1_auto_pc_0_synth_1                  \
-#		      }
+		   ${bd_file}]
 
 # Apparently, there is no lmap function in Vivado's Tcl...shame
 # Generate a list with members representing strings to match synth jobs
@@ -1154,27 +1119,18 @@ launch_runs -jobs 4 $l_ips_synth
 wait_on_run [lindex $l_ips_synth end]
 
 # Create the HDL wrapper top level
-make_wrapper -files [get_files myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd] -top
-add_files -norecurse myproj/project_1.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v
+make_wrapper -files [get_files ${bd_file}] -top
+add_files -norecurse ${wrapper_file}
 
-#set_property synth_checkpoint_mode Singular [get_files  myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd]
-
-#generate_target all [get_files  myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd]
-
-#export_ip_user_files -of_objects [get_files myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd] -no_script -sync -force -quiet
-
-#create_ip_run [get_files -of_objects [get_fileset sources_1] myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd]
-
-#launch_runs -jobs 4 design_1_synth_1
 launch_runs synth_1 -jobs 4
 wait_on_run synth_1
-
-##export_simulation -of_objects [get_files myproj/project_1.srcs/sources_1/bd/design_1/design_1.bd] -directory myproj/project_1.ip_user_files/sim_scripts -ip_user_files_dir myproj/project_1.ip_user_files -ipstatic_source_dir myproj/project_1.ip_user_files/ipstatic -lib_map_path [list {modelsim=myproj/project_1.cache/compile_simlib/modelsim} {questa=myproj/project_1.cache/compile_simlib/questa} {ies=myproj/project_1.cache/compile_simlib/ies} {xcelium=myproj/project_1.cache/compile_simlib/xcelium} {vcs=myproj/project_1.cache/compile_simlib/vcs} {riviera=myproj/project_1.cache/compile_simlib/riviera}] -use_ip_compiled_libs -force -quiet
 
 launch_runs impl_1 -to_step write_bitstream -jobs 4
 wait_on_run impl_1
 
-set pfm_dir       $::env(G_PFM_DIR)
-set xsa_file_name $::env(G_XSA_FILE_NAME)
-write_hw_platform -include_bit -verbose ${pfm_dir}/${xsa_file_name}
-validate_hw_platform -verbose ${pfm_dir}/${xsa_file_name}
+write_hw_platform    -include_bit -force ${pfm_dir}/${xsa_file_name}
+validate_hw_platform -verbose            ${pfm_dir}/${xsa_file_name}
+
+open_run impl_1
+#report_timing_summary -max_paths 10 -file design_1_wrapper_timing_summary_routed.rpt -pb design_1_wrapper_timing_summary_routed.pb -rpx design_1_wrapper_timing_summary_routed.rpx -warn_on_violation
+report_timing_summary -max_paths 10  -pb design_1_wrapper_timing_summary_routed.pb -rpx design_1_wrapper_timing_summary_routed.rpx -warn_on_violation
