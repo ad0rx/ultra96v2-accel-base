@@ -29,7 +29,7 @@ Vivado Project
 | 'name' fields in the xsa appear to be set by the file name given for
 | xsa file
 
-
+| break out pfm interface set_parameters to an external function
 
 PetaLinux Project
 #################
