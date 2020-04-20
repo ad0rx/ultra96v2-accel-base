@@ -23,6 +23,9 @@ export G_VITIS_PROJECT_DIR=${G_BUILD_DIR}/vitis-project
 export G_PFM_DIR=${G_BUILD_DIR}/pfm
 export G_XSA_FILE_NAME=${PROJ}.xsa
 
+G_NUM_CPU_CORES=$(grep -m 1 'cpu cores' /proc/cpuinfo | awk '{print $4}')
+export G_NUM_CPU_CORES
+
 # Add project scripts to PATH
 export PATH=${PWS}/bin:${PATH}
 
