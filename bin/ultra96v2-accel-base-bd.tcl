@@ -1132,5 +1132,3 @@ write_hw_platform    -include_bit -force ${pfm_dir}/${xsa_file_name}
 validate_hw_platform -verbose            ${pfm_dir}/${xsa_file_name}
 
 open_run impl_1
-#report_timing_summary -max_paths 10 -file design_1_wrapper_timing_summary_routed.rpt -pb design_1_wrapper_timing_summary_routed.pb -rpx design_1_wrapper_timing_summary_routed.rpx -warn_on_violation
-report_timing_summary -max_paths 10  -pb design_1_wrapper_timing_summary_routed.pb -rpx design_1_wrapper_timing_summary_routed.rpx -warn_on_violation

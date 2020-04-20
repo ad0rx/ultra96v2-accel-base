@@ -29,4 +29,35 @@ cd ${G_VIVADO_PROJECT_DIR}
 vivado -mode batch -source ${PWS}/bin/ultra96v2-accel-base-bd.tcl
 #vivado -mode tcl -source ${PWS}/bin/ultra96v2-accel-base-bd.tcl
 
-echo "${ME}: Exit"
+# Primitive attempt to determine whether design was sucessfully
+# implemented. Look for the timing summary and grep for string
+# "All user specified timing constraints are met."
+RETVAL=0
+RPT=$(find ${G_VIVADO_PROJECT_DIR} -name "*timing_summary_routed.rpt")
+#echo "RPT: ${RPT}"
+if [ -z "${RPT}" ]
+then
+    RETVAL=-2
+    echo "${ME}: Vivado Implementation Failed"
+else
+    RETVAL=$(grep -c --max-count=1                                 \
+		  "All user specified timing constraints are met." \
+		  ${RPT})
+fi
+
+#echo "RETVAL: $RETVAL"
+case ${RETVAL} in
+    "1")
+	echo "${ME}: Exit"
+	exit 0
+	;;
+
+    "")
+	exit 3
+	;;
+
+    *)
+	exit 4
+	;;
+
+esac
