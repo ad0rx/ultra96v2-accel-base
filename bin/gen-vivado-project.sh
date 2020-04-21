@@ -40,11 +40,14 @@ then
     RETVAL=-2
     echo "${ME}: Vivado Implementation Failed"
 else
+    # Implementation was sucessful
     RETVAL=$(grep -c --max-count=1                                 \
 		  "All user specified timing constraints are met." \
 		  ${RPT})
 fi
 
+# Set the exit value of this script to reflect whether the bitstream
+# was sucessfully generated for upstream scripts calling this one.
 #echo "RETVAL: $RETVAL"
 case ${RETVAL} in
     "1")

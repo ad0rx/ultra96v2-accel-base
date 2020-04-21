@@ -1158,5 +1158,3 @@ wait_on_run impl_1
 
 write_hw_platform    -include_bit -force ${pfm_dir}/${xsa_file_name}
 validate_hw_platform -verbose            ${pfm_dir}/${xsa_file_name}
-
-open_run impl_1
