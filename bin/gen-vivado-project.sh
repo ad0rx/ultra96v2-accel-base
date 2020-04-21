@@ -1,5 +1,6 @@
 #!/bin/bash
-# Execute Vivado in batch mode to build the hardware project
+# Execute Vivado in batch mode to build the hardware project and xsa
+# file
 
 ME="gen-vivado-project.sh"
 
