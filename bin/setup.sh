@@ -19,6 +19,11 @@ cd ${PWS}
 export G_BUILD_DIR=${PWS}/build
 export G_VIVADO_PROJECT_DIR=${G_BUILD_DIR}/vivado-project
 export G_PETALINUX_PROJECT_DIR=${G_BUILD_DIR}/petalinux-project
+export G_VITIS_PLATFORM_PROJECT_DIR=${G_BUILD_DIR}/vitis-platform-project
+export G_BOOT_DIR=${G_BUILD_DIR}/boot
+export G_LINUX_BIF=${G_BUILD_DIR}/boot/linux.bif
+export G_SYSROOTS_DIR=${G_BUILD_DIR}/sysroots/aarch64-xilinx-linux
+
 export G_VITIS_PROJECT_DIR=${G_BUILD_DIR}/vitis-project
 export G_PFM_DIR=${G_BUILD_DIR}/pfm
 export G_XSA_FILE_NAME=${PROJ}.xsa
