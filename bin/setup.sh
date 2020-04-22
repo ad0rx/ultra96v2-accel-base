@@ -23,8 +23,9 @@ export G_VITIS_PLATFORM_PROJECT_DIR=${G_BUILD_DIR}/vitis-platform-project
 export G_BOOT_DIR=${G_BUILD_DIR}/boot
 export G_LINUX_BIF=${G_BUILD_DIR}/boot/linux.bif
 export G_SYSROOTS_DIR=${G_BUILD_DIR}/sysroots/aarch64-xilinx-linux
-
+export G_PETALINUX_BSP_FILE=/mnt/projects/no_bkup/avnet/bsps/ultra96v2_oob_2019_2.bsp
 export G_VITIS_PROJECT_DIR=${G_BUILD_DIR}/vitis-project
+export G_SSTATE_AARCH64_DIR=/mnt/projects/no_bkup/xilinx/downloads/sstate/sstate_aarch64_2019.2/aarch64
 export G_PFM_DIR=${G_BUILD_DIR}/pfm
 export G_XSA_FILE_NAME=${PROJ}.xsa
 
@@ -68,7 +69,6 @@ pa () {
 }
 
 # Test if a directory exists, delete
-#declare -f p_delete_existing_dir
 p_delete_existing_dir_then_make () {
 
     # If the project directory exists, delete it
@@ -90,6 +90,22 @@ p_delete_existing_dir_then_make () {
     mkdir -p $1
 }
 export -f  p_delete_existing_dir_then_make
+
+# Disable a package so that it is not built in PetaLinux project
+# Disable multiple packages by calling with a space delimited string
+# "pack pack1" for example
+p_disable_petalinux_rootfs_packages () {
+
+    cfg=${G_PETALINUX_PROJECT_DIR}/${PROJ}/project-spec/configs/rootfs_config
+
+    for p in "${1}"
+    do
+	echo "${ME}: Disabling Rootfs Package: $p"
+	sed -i "s/CONFIG_$p=y/# CONFIG_$p is not set/g" "${cfg}"
+    done
+
+}
+export -f p_disable_petalinux_rootfs_packages
 
 # End Functions ######################################################
 
