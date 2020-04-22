@@ -26,7 +26,7 @@ mkdir -p ${G_SYSROOTS_DIR}
 # Generate new vitis project
 cd ${G_VITIS_PLATFORM_PROJECT_DIR}
 
-# See bin/ultra96v2-accel-base-bd.tcl for details
+# See bin/vitis-platform.tcl for details
 #xsct ${PWS}/bin/vitis-platform.tcl
 xsct -interactive ${PWS}/bin/vitis-platform.tcl
 
