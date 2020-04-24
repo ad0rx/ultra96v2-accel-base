@@ -104,6 +104,9 @@ p_disable_petalinux_rootfs_packages () {
 	sed -i "s/CONFIG_$p=y/# CONFIG_$p is not set/g" "${cfg}"
     done
 
+    petalinux-config -c rootfs --silentconfig --project \
+     ${G_PETALINUX_PROJECT_DIR}/${PROJ}
+
 }
 export -f p_disable_petalinux_rootfs_packages
 
