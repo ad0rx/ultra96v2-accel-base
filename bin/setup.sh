@@ -107,6 +107,19 @@ p_disable_petalinux_rootfs_packages () {
 }
 export -f p_disable_petalinux_rootfs_packages
 
+p_copy_petalinux_collateral_to_boot_dir () {
+
+    files=(image.ub zynqmp_fsbl.elf pmufw.elf bl31.elf u-boot.elf)
+    for f in ${files[@]}
+    do
+	#echo "f: $f"
+	cp ${G_PETALINUX_PROJECT_DIR}/${PROJ}/images/linux/${f} \
+	   ${G_BOOT_DIR}/
+    done
+
+}
+export -f p_copy_petalinux_collateral_to_boot_dir
+
 # End Functions ######################################################
 
 # Aliases
