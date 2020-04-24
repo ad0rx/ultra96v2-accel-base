@@ -37,6 +37,23 @@ petalinux-config --get-hw-description=${G_PFM_DIR} --defconfig
 # Disable 96boards-sensors due to build failures from bad dependency URL
 p_disable_petalinux_rootfs_packages "packagegroup-petalinux-96boards-sensors"
 
+# Fix device tree
+cat ${PWS}/support/petalinux/zyxclmm_drm.dts_node >> \
+    project-spec/meta-user/recipes-bsp/device-tree/files/system-user.dtsi
+
 time petalinux-build
+
+# Copy collateral to boot dir
+p_copy_petalinux_collateral_to_boot_dir
+
+# Copy linux.bif to boot dir
+cp ${PWS}/support/petalinux/linux.bif\
+   ${G_BOOT_DIR}
+
+# Create the sdk.sh
+time petalinux-build --sdk
+
+# Extract the sysroot
+petalinux-package --sysroot --dir ${G_BUILD_DIR}
 
 echo "${ME}: Exit"
