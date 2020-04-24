@@ -1,5 +1,6 @@
 #!/bin/bash
 # Execute XSCT in batch mode to build the Vitis acceleration platform
+# Need to source sysroot scripts
 
 ME="gen-vitis-platform.sh"
 
