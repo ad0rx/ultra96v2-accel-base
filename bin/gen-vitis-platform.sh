@@ -28,7 +28,11 @@ mkdir -p ${G_SYSROOTS_DIR}
 cd ${G_VITIS_PLATFORM_PROJECT_DIR}
 
 # See bin/vitis-platform.tcl for details
-#xsct ${PWS}/bin/vitis-platform.tcl
-xsct -interactive ${PWS}/bin/vitis-platform.tcl
+xsct ${PWS}/bin/vitis-platform.tcl
+#xsct -interactive ${PWS}/bin/vitis-platform.tcl
+
+# Copy the platform to the pfm dir
+cp ${G_VITIS_PLATFORM_PROJECT_DIR}/${PROJ}/export/${PROJ}/${PROJ}.xpfm \
+   ${G_PFM_DIR}
 
 echo "${ME}: Exit"
