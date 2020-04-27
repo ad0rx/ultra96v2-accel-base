@@ -44,3 +44,5 @@ domain config -image ${boot}
 platform write
 domain config -sysroot ${sysroots}
 platform write
+
+platform generate
