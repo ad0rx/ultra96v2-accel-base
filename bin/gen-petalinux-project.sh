@@ -47,7 +47,7 @@ time petalinux-build
 p_copy_petalinux_collateral_to_boot_dir
 
 # Copy linux.bif to boot dir
-cp ${PWS}/support/petalinux/linux.bif\
+cp ${PWS}/support/petalinux/linux.bif \
    ${G_BOOT_DIR}
 
 # Create the sdk.sh
