@@ -39,6 +39,7 @@ p_disable_petalinux_rootfs_packages "packagegroup-petalinux-96boards-sensors"
 
 # Setup PetaLinux to use SSTATE
 p_enable_petalinux_sstate
+petalinux-config --defconfig
 
 # Fix device tree
 cat ${PWS}/support/petalinux/zyxclmm_drm.dts_node >> \
