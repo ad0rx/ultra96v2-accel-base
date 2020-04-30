@@ -30,6 +30,7 @@ Vivado Project
 | xsa file
 
 | break out pfm interface set_parameters to an external function
+| install ultra96v2 board files
 
 PetaLinux Project
 #################
@@ -37,14 +38,21 @@ PetaLinux Project
 | disable 96boards-sensors arduino-tools issue
 
 | build sd card img file for rufus
-
+| wifi credentials
+| wifi autostart
+| XILINX_XRT set to /usr
+| sstate for faster builds
+| remove extra files jffs cpio etc
+| fsck.fat32
+|  IMAGE_INSTALL_append = " dosfstools"
 
 
 Vitis Project
 #############
 
 | Install board files for u96
-
+| v++ options
+|  debug, profile, interactive, config, save temps,
 
 .. ****************
 .. H2: Subsection 1
