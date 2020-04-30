@@ -37,6 +37,9 @@ petalinux-config --get-hw-description=${G_PFM_DIR} --defconfig
 # Disable 96boards-sensors due to build failures from bad dependency URL
 p_disable_petalinux_rootfs_packages "packagegroup-petalinux-96boards-sensors"
 
+# Setup PetaLinux to use SSTATE
+p_enable_petalinux_sstate
+
 # Fix device tree
 cat ${PWS}/support/petalinux/zyxclmm_drm.dts_node >> \
     project-spec/meta-user/recipes-bsp/device-tree/files/system-user.dtsi
