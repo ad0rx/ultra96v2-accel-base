@@ -26,6 +26,7 @@ export G_SYSROOTS_DIR=${G_BUILD_DIR}/sysroots/aarch64-xilinx-linux
 export G_PETALINUX_BSP_FILE=/mnt/projects/no_bkup/avnet/bsps/ultra96v2_oob_2019_2.bsp
 export G_VITIS_PROJECT_DIR=${G_BUILD_DIR}/vitis-project
 export G_SSTATE_AARCH64_DIR=/mnt/projects/no_bkup/xilinx/downloads/sstate/sstate_aarch64_2019.2/aarch64
+export G_SSTATE_AARCH64_DIRe=\/mnt\/projects\/no_bkup\/xilinx\/downloads\/sstate\/sstate_aarch64_2019.2\/aarch64
 export G_PFM_DIR=${G_BUILD_DIR}/pfm
 export G_XSA_FILE_NAME=${PROJ}.xsa
 export PLATFORM_REPO_PATHS=${G_VITIS_PLATFORM_PROJECT_DIR}/${PROJ}/export/${PROJ}
@@ -123,6 +124,19 @@ p_copy_petalinux_collateral_to_boot_dir () {
 
 }
 export -f p_copy_petalinux_collateral_to_boot_dir
+
+p_enable_petalinux_sstate () {
+
+    cfg=${G_PETALINUX_PROJECT_DIR}/${PROJ}/project-spec/configs/config
+
+    sed -i "/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL=.*/\
+    c CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL=${G_SSTATE_AARCH64_DIR}" \
+	${cfg}
+
+    sed -i "s/\(CONFIG_YOCTO_NETWORK_SSTATE_FEEDS\)=.*/\1 is not set/" \
+	${cfg}
+}
+export -f p_enable_petalinux_sstate
 
 # End Functions ######################################################
 
