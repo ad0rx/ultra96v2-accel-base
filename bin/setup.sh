@@ -130,11 +130,12 @@ p_enable_petalinux_sstate () {
     cfg=${G_PETALINUX_PROJECT_DIR}/${PROJ}/project-spec/configs/config
 
     sed -i "/CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL=.*/\
-    c CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL=${G_SSTATE_AARCH64_DIR}" \
+    c CONFIG_YOCTO_LOCAL_SSTATE_FEEDS_URL=\"file://${G_SSTATE_AARCH64_DIR}\"" \
 	${cfg}
 
-    sed -i "s/\(CONFIG_YOCTO_NETWORK_SSTATE_FEEDS\)=.*/\1 is not set/" \
-	${cfg}
+#    sed -i "s/\(CONFIG_YOCTO_NETWORK_SSTATE_FEEDS\)=.*/\1 is not set/" \
+#	${cfg}
+
 }
 export -f p_enable_petalinux_sstate
 
