@@ -79,7 +79,17 @@ hw_emu_kernel:
 	$(BLDDIR)/vadd.hw_emu.xclbin --config $(SRCDIR)/design.cfg
 
 sw_emu_kernel:
-	@echo "Not yet implemented"
+	@echo "Building Kernel"
+	cd $(BLDDIR);                                                 \
+	$(VPP) -t sw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
+	-I $(SRCDIR) -o $(BLDDIR)/vadd.sw_emu.xo                      \
+	$(SRCDIR)/krnl_vadd.cpp
+
+	@echo "Linking Kernel"
+	cd $(BLDDIR);                                                 \
+	$(VPP) -t sw_emu --platform $(PLATFORM)                       \
+	--link $(BLDDIR)/vadd.sw_emu.xo -o                            \
+	$(BLDDIR)/vadd.sw_emu.xclbin --config $(SRCDIR)/design.cfg
 
 .PHONY: clean
 clean:
