@@ -25,6 +25,7 @@ export G_LINUX_BIF=${G_BUILD_DIR}/boot/linux.bif
 export G_SYSROOTS_DIR=${G_BUILD_DIR}/sysroots/aarch64-xilinx-linux
 export G_PETALINUX_BSP_FILE=/mnt/projects/no_bkup/avnet/bsps/ultra96v2_oob_2019_2.bsp
 export G_VITIS_PROJECT_DIR=${G_BUILD_DIR}/vitis-project
+export G_SRC_DIR=${PWS}/src
 export G_SSTATE_AARCH64_DIR=/mnt/projects/no_bkup/xilinx/downloads/sstate/sstate_aarch64_2019.2/aarch64
 export G_SSTATE_AARCH64_DIRe=\/mnt\/projects\/no_bkup\/xilinx\/downloads\/sstate\/sstate_aarch64_2019.2\/aarch64
 export G_PFM_DIR=${G_BUILD_DIR}/pfm
