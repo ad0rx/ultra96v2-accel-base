@@ -20,11 +20,11 @@ help :
 	@clear
 	@echo "**********************************************************************"
 	@echo "* Targets:                                                            "
-	@echo "*   host      : the host application                                  "
-	@echo "*   hw_kernel : hardware kernels                                      "
-	@echo "*   clean     : clean up the workspace                                "
-	@echo "*                                                                     "
-	@echo "*                                                                     "
+	@echo "*   host         : the host application                               "
+	@echo "*   hw_kernel    : hardware kernels                                   "
+	@echo "*   hw_emu_kernel: hw_emu kernels                                     "
+	@echo "*   sw_emu_kernel: sw_emu kernels                                     "
+	@echo "*   clean        : you know what this does                            "
 	@echo "*                                                                     "
 	@echo "**********************************************************************"
 	@echo "SRCDIR  : $(SRCDIR)"
@@ -47,17 +47,20 @@ help :
 host:  $(HOSTOBJS)
 #	@echo "host"
 #	@echo "HOSTOBJS: $(HOSTOBJS)"
+	cd $(BLDDIR)                                                  \
 	$(GPP) -o $(BLDDIR)/$@ $(BLDDIR)/vadd.o -lxilinxopencl        \
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core                      \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
 
 hw_kernel:
 	@echo "Building Kernel"
+	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw --platform $(PLATFORM) -c -k krnl_vadd           \
 	-I $(SRCDIR) -o $(BLDDIR)/vadd.hw.xo                          \
 	$(SRCDIR)/krnl_vadd.cpp
 
 	@echo "Linking Kernel"
+	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw --platform $(PLATFORM)                           \
 	--link $(BLDDIR)/vadd.hw.xo -o                                \
 	$(BLDDIR)/vadd.hw.xclbin --config $(SRCDIR)/design.cfg
