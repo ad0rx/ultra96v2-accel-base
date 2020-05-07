@@ -47,7 +47,7 @@ help :
 host:  $(HOSTOBJS)
 #	@echo "host"
 #	@echo "HOSTOBJS: $(HOSTOBJS)"
-	cd $(BLDDIR)                                                  \
+	cd $(BLDDIR);                                                 \
 	$(GPP) -o $(BLDDIR)/$@ $(BLDDIR)/vadd.o -lxilinxopencl        \
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core                      \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
