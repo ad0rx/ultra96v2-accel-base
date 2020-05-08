@@ -41,7 +41,7 @@ help :
 	$(eval F = $(patsubst $(BLDDIR)/%.o,$(SRCDIR)/%.cpp,$@))    \
 	$(GPP) -I $(SYSROOT)/usr/include/xrt                          \
 	       -I /opt/Xilinx/Vivado/2019.2/include                   \
-	       -I ${SYSROOT}/usr/include -c -fmessage-length=0        \
+	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -o $@ $(F)             \
 
 host:  $(HOSTOBJS)
@@ -62,8 +62,9 @@ hw_kernel:
 	@echo "Linking Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw --platform $(PLATFORM)                           \
-	--link $(BLDDIR)/vadd.hw.xo -o                                \
-	$(BLDDIR)/vadd.hw.xclbin --config $(SRCDIR)/design.cfg
+	--link $(BLDDIR)/vadd.hw.xo --save-temps                      \
+	-o $(BLDDIR)/vadd.hw.xclbin                                   \
+	--config $(SRCDIR)/design.cfg                                 \
 
 hw_emu_kernel:
 	@echo "Building Kernel"
@@ -75,8 +76,9 @@ hw_emu_kernel:
 	@echo "Linking Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw_emu --platform $(PLATFORM)                       \
-	--link $(BLDDIR)/vadd.hw_emu.xo -o                            \
-	$(BLDDIR)/vadd.hw_emu.xclbin --config $(SRCDIR)/design.cfg
+	--link $(BLDDIR)/vadd.hw_emu.xo --save-temps                  \
+	-o $(BLDDIR)/vadd.hw_emu.xclbin                               \
+	--config $(SRCDIR)/design.cfg
 
 sw_emu_kernel:
 	@echo "Building Kernel"
@@ -88,8 +90,9 @@ sw_emu_kernel:
 	@echo "Linking Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t sw_emu --platform $(PLATFORM)                       \
-	--link $(BLDDIR)/vadd.sw_emu.xo -o                            \
-	$(BLDDIR)/vadd.sw_emu.xclbin --config $(SRCDIR)/design.cfg
+	--link $(BLDDIR)/vadd.sw_emu.xo --save-temps                  \
+	-o $(BLDDIR)/vadd.sw_emu.xclbin                               \
+	--config $(SRCDIR)/design.cfg
 
 .PHONY: clean
 clean:
