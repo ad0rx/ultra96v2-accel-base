@@ -66,6 +66,7 @@ hw_kernel:
 	-o $(BLDDIR)/vadd.hw.xclbin                                   \
 	--config $(SRCDIR)/design.cfg                                 \
 
+# Need to add emconfig step
 hw_emu_kernel:
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
@@ -80,6 +81,7 @@ hw_emu_kernel:
 	-o $(BLDDIR)/vadd.hw_emu.xclbin                               \
 	--config $(SRCDIR)/design.cfg
 
+# Need to add emconfig step
 sw_emu_kernel:
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
