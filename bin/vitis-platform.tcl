@@ -45,4 +45,14 @@ platform write
 domain config -sysroot ${sysroots}
 platform write
 
+# Pulled from zcu102 edge platform from Xilinx
+domain config -qemu-args ${pws}/support/qemu/qemu_args.txt
+platform write
+
+domain config -pmuqemu-args ${pws}/support/qemu/pmu_args.txt
+platform write
+
+domain config -qemu-data ${pws}/support/qemu
+platform write
+
 platform generate
