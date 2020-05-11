@@ -8,9 +8,9 @@ Ultra96v2 using Vitis Acceleration and PetaLinux.
   test124
 #+END_SRC
 
-vadd to test vio access with accelerator
-test --save-temps and look at bd to verify VIO is still there
-try to toggle leds from app or xsct
+| vadd to test vio access with accelerator
+| test --save-temps and look at bd to verify VIO is still there
+| try to toggle leds from app or xsct
 
 sstate build
 commit vivado bd - merge with project version
