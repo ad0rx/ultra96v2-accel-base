@@ -1,5 +1,4 @@
 vadd to test vio access with accelerator
-vadd makefile flow
 test --save-temps and look at bd to verify VIO is still there
 try to toggle leds from app or xsct
 
