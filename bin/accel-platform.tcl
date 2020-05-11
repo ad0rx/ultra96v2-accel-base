@@ -3,6 +3,10 @@
 # tcl attributes. There is a lot of hard coding in here, but
 # keeping it separate makes it easier to change the Vivado hardware
 # design.
+#
+# Add this to the bottom of the exported bd tcl:
+# source $::env(PWS)/bin/accel-platform.tcl
+# accel-platform
 
 proc accel-platform {} {
 
