@@ -46,6 +46,10 @@ ALL TIMES.
 #include <iostream>
 #include "vadd.h"
 
+#include <fcntl.h>
+#include <unistd.h>
+#include "sys/mman.h"
+
 static const int DATA_SIZE = 4096;
 
 static const std::string error_message =
@@ -61,13 +65,32 @@ int main(int argc, char* argv[]) {
 	}
 
     char* xclbinFilename = argv[1];
-    
+
+    // Example to write VIO LEDs
+    int fd = open("/dev/mem", O_RDWR);
+    void* ptr = mmap(NULL,4096,PROT_READ | PROT_WRITE,
+		     MAP_SHARED, fd, 0x80010000);
+
+    close(fd);
+
+    if (ptr == MAP_FAILED)
+      {
+	std::cout << "mmap failed\r\n";
+	return -1;
+      }
+
+    volatile unsigned* gpio_o = (unsigned*)(ptr);
+    *gpio_o = 0x55555555;
+    munmap(ptr, 4096);
+    // End Example to write VIO LEDs
+
+
     // Compute the size of array in bytes
     size_t size_in_bytes = DATA_SIZE * sizeof(int);
-    
+
     // Creates a vector of DATA_SIZE elements with an initial value of 10 and 32
     // using customized allocator for getting buffer alignment to 4k boundary
-    
+
     std::vector<cl::Device> devices;
     cl::Device device;
     std::vector<cl::Platform> platforms;
@@ -77,29 +100,29 @@ int main(int argc, char* argv[]) {
     //Device in Xilinx Platform
     cl::Platform::get(&platforms);
     for(size_t i = 0; (i < platforms.size() ) & (found_device == false) ;i++){
-        cl::Platform platform = platforms[i];
-        std::string platformName = platform.getInfo<CL_PLATFORM_NAME>();
-        if ( platformName == "Xilinx"){
-            devices.clear();
-            platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
+	cl::Platform platform = platforms[i];
+	std::string platformName = platform.getInfo<CL_PLATFORM_NAME>();
+	if ( platformName == "Xilinx"){
+	    devices.clear();
+	    platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
 	    if (devices.size()){
 		    device = devices[0];
 		    found_device = true;
 		    break;
 	    }
-        }
+	}
     }
     if (found_device == false){
-       std::cout << "Error: Unable to find Target Device " 
-           << device.getInfo<CL_DEVICE_NAME>() << std::endl;
-       return EXIT_FAILURE; 
+       std::cout << "Error: Unable to find Target Device "
+	   << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+       return EXIT_FAILURE;
     }
 
     // Creating Context and Command Queue for selected device
     cl::Context context(device);
     cl::CommandQueue q(context, device, CL_QUEUE_PROFILING_ENABLE);
 
-    // Load xclbin 
+    // Load xclbin
     std::cout << "Loading: '" << xclbinFilename << "'\n";
     std::ifstream bin_file(xclbinFilename, std::ifstream::binary);
     bin_file.seekg (0, bin_file.end);
@@ -107,23 +130,23 @@ int main(int argc, char* argv[]) {
     bin_file.seekg (0, bin_file.beg);
     char *buf = new char [nb];
     bin_file.read(buf, nb);
-    
+
     // Creating Program from Binary File
     cl::Program::Binaries bins;
     bins.push_back({buf,nb});
     devices.resize(1);
     cl::Program program(context, devices, bins);
-    
-    // This call will get the kernel object from program. A kernel is an 
-    // OpenCL function that is executed on the FPGA. 
+
+    // This call will get the kernel object from program. A kernel is an
+    // OpenCL function that is executed on the FPGA.
     cl::Kernel krnl_vector_add(program,"krnl_vadd");
-    
+
     // These commands will allocate memory on the Device. The cl::Buffer objects can
-    // be used to reference the memory locations on the device. 
+    // be used to reference the memory locations on the device.
     cl::Buffer buffer_a(context, CL_MEM_READ_ONLY, size_in_bytes);
     cl::Buffer buffer_b(context, CL_MEM_READ_ONLY, size_in_bytes);
     cl::Buffer buffer_result(context, CL_MEM_WRITE_ONLY, size_in_bytes);
-    
+
     //set the kernel Arguments
     int narg=0;
     krnl_vector_add.setArg(narg++,buffer_a);
@@ -158,12 +181,12 @@ int main(int argc, char* argv[]) {
     //Verify the result
     int match = 0;
     for (int i = 0; i < DATA_SIZE; i++) {
-        int host_result = ptr_a[i] + ptr_b[i];
-        if (ptr_result[i] != host_result) {
-            printf(error_message.c_str(), i, host_result, ptr_result[i]);
-            match = 1;
-            break;
-        }
+	int host_result = ptr_a[i] + ptr_b[i];
+	if (ptr_result[i] != host_result) {
+	    printf(error_message.c_str(), i, host_result, ptr_result[i]);
+	    match = 1;
+	    break;
+	}
     }
 
     q.enqueueUnmapMemObject(buffer_a , ptr_a);
@@ -171,7 +194,7 @@ int main(int argc, char* argv[]) {
     q.enqueueUnmapMemObject(buffer_result , ptr_result);
     q.finish();
 
-    std::cout << "TEST " << (match ? "FAILED" : "PASSED") << std::endl; 
+    std::cout << "TEST " << (match ? "FAILED" : "PASSED") << std::endl;
     return (match ? EXIT_FAILURE :  EXIT_SUCCESS);
 
 }
