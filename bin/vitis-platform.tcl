@@ -42,10 +42,15 @@ domain config -bif ${linux_bif}
 platform write
 domain config -image ${boot}
 platform write
-domain config -sysroot ${sysroots}
-platform write
+
+# Commented because if you do this, Vitis will copy entire sysroot
+# which is not necessary. Then in the app, just reference the existing
+# sysroot from sdk.sh
+#domain config -sysroot ${sysroots}
+#platform write
 
 # Pulled from zcu102 edge platform from Xilinx
+# More work needed here
 domain config -qemu-args ${pws}/support/qemu/qemu_args.txt
 platform write
 
