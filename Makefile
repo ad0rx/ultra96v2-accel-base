@@ -12,8 +12,8 @@ BLDDIR  := $(G_BUILD_DIR)/vitis
 SYSROOT := $(G_SYSROOTS_DIR)
 
 # Collateral
-HOSTSRCS := $(SRCDIR)/vadd.c
-HOSTOBJS := $(patsubst $(SRCDIR)/%.c,$(BLDDIR)/%.o,$(HOSTSRCS))
+HOSTSRCS := $(SRCDIR)/vadd.cpp
+HOSTOBJS := $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/%.o,$(HOSTSRCS))
 
 .PHONY : help
 help :
@@ -31,6 +31,7 @@ help :
 	@echo "BLDDIR  : $(BLDDIR)"
 	@echo "SYSROOT : $(SYSROOT)"
 	@echo "HOSTSRCS: $(HOSTSRCS)"
+	@echo "HOSTOBJS: $(HOSTOBJS)"
 
 # TODO fix cpp and h depends
 # \ is used to join lines in the recipe because each line would
@@ -44,9 +45,15 @@ help :
 	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -o $@ $(F)             \
 
+#$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
+#	@echo "Building: $@"
+#	$(GPP) -I $(SYSROOT)/usr/include/xrt                          \
+#	       -I /opt/Xilinx/Vivado/2019.2/include                   \
+#	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
+#	       -std=c++14 --sysroot=$(SYSROOT) -o $@ $(SRCDIR)/vadd.cpp \
+
 host:  $(HOSTOBJS)
-#	@echo "host"
-#	@echo "HOSTOBJS: $(HOSTOBJS)"
+	@echo "Linking host"
 	cd $(BLDDIR);                                                 \
 	$(GPP) -o $(BLDDIR)/$@ $(BLDDIR)/vadd.o -lxilinxopencl        \
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core                      \
