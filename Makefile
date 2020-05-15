@@ -88,8 +88,13 @@ hw_emu_kernel:
 	-o $(BLDDIR)/vadd.hw_emu.xclbin                               \
 	--config $(SRCDIR)/design.cfg
 
+emconfig:
+	@echo "Building emconfig.json"
+	cd $(BLDDIR);                                                 \
+	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
+
 # Need to add emconfig step
-sw_emu_kernel:
+sw_emu_kernel: emconfig
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t sw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
@@ -102,6 +107,11 @@ sw_emu_kernel:
 	--link $(BLDDIR)/vadd.sw_emu.xo --save-temps                  \
 	-o $(BLDDIR)/vadd.sw_emu.xclbin                               \
 	--config $(SRCDIR)/design.cfg
+
+run:
+	cd $(BLDDIR);                                                 \
+	launch_emulator -t sw_emu -runtime ocl                        \
+	-device-family Ultrascale
 
 .PHONY: clean
 clean:
