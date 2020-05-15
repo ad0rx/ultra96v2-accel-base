@@ -108,10 +108,30 @@ sw_emu_kernel: emconfig
 	-o $(BLDDIR)/vadd.sw_emu.xclbin                               \
 	--config $(SRCDIR)/design.cfg
 
+# Taken from logs of running qemu on zcu102 edge platform
+# Never boots, all CPU cores at 100%. Possibly an issue with image.ub
+# and rootfs or just a very large rootfs, not sure
+# zcu102 qemu uses ramdisk
+#
+# using the sd-card-image switch, and pointing to sd_card.img for a
+# zcu102 app, it would boot fine. Getting closer.
+#
+# Changed sd_card.manifest to point to image.ub from zcu102_base
+# edge platfrom as downloaded from Xilinx and that also worked
+# looks like sd_card.img is dynamically generated when launch_emulator
+# is run
+#
+# commended mmap in the vadd.cpp for led vio and added host to
+# sd_card.manifest and was able to run on qemu!
+#
+# probably need to add xrt.ini to get debug data
+#
+# how to see xsim waveform?
 run:
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t sw_emu -runtime ocl                        \
-	-device-family Ultrascale
+	-device-family Ultrascale -pid-file emulation.pid -no-reboot  \
+	-forward-port 1440 1534
 
 .PHONY: clean
 clean:
