@@ -1,5 +1,5 @@
 /*******************************************************************************
-Vendor: Xilinx
+Vendor: Xilin x
 Associated Filename: vadd.cpp
 Purpose: VITIS vector addition
 
@@ -47,8 +47,8 @@ ALL TIMES.
 #include "vadd.h"
 
 
-/* For LED VIO Example Code
- */
+									 /* For LED VIO Example Code
+									  */
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -56,7 +56,7 @@ ALL TIMES.
 #define GPIO_ADDRESS 0x800100
 #define GPIO_VALUE   0x555555
 
-static const int DATA_SIZE = 4096;
+  static const int DATA_SIZE = 4096;
 
 static const std::string error_message =
   "Error: Result mismatch:\n"
@@ -73,6 +73,13 @@ int main(int argc, char* argv[]) {
   char* xclbinFilename = argv[1];
 
   // Example to write VIO LEDs
+  // This did not work when running sw_emu on qemu
+  // could be related to pl sim options in qemu, don't know
+  // maybe because the image.ub in that qemu run was not
+  // built against my u96 hardware, and therefore dts was
+  // out of sync.
+  //
+  // so added the else clause
   int fd = open("/dev/mem", O_RDWR);
   void* ptr = mmap(NULL,4096,PROT_READ | PROT_WRITE,
 		   MAP_SHARED, fd, GPIO_ADDRESS);
@@ -81,13 +88,14 @@ int main(int argc, char* argv[]) {
 
   if (ptr == MAP_FAILED)
     {
-      std::cout << "mmap failed\r\n";
-      return -1;
+      std::cout << "mmap failed, vio leds not available\r\n";
     }
-
-  volatile unsigned* gpio_o = (unsigned*)(ptr);
-  *gpio_o = GPIO_VALUE;
-  munmap(ptr, 4096);
+  else
+    {
+      volatile unsigned* gpio_o = (unsigned*)(ptr);
+      *gpio_o = GPIO_VALUE;
+      munmap(ptr, 4096);
+    }
   // End Example to write VIO LEDs
 
 
