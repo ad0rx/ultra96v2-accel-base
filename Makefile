@@ -56,7 +56,7 @@ host:  $(HOSTOBJS)
 	@echo "Linking host"
 	cd $(BLDDIR);                                                 \
 	$(GPP) -o $(BLDDIR)/$@ $(BLDDIR)/vadd.o -lxilinxopencl        \
-	-lpthread -lrt -lstdc++ -lgmp -lxrt_core                      \
+	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
 
 hw_kernel:
@@ -64,13 +64,13 @@ hw_kernel:
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw --platform $(PLATFORM) -c -k krnl_vadd           \
 	-I $(SRCDIR) -o $(BLDDIR)/vadd.hw.xo                          \
-	$(SRCDIR)/krnl_vadd.cpp
+	$(SRCDIR)/krnl_vadd.cpp -g
 
 	@echo "Linking Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw --platform $(PLATFORM)                           \
 	--link $(BLDDIR)/vadd.hw.xo --save-temps                      \
-	-o $(BLDDIR)/vadd.hw.xclbin                                   \
+	-o $(BLDDIR)/vadd.hw.xclbin -g                                \
 	--config $(SRCDIR)/design.cfg                                 \
 
 # Need to add emconfig step
@@ -79,13 +79,13 @@ hw_emu_kernel:
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
 	-I $(SRCDIR) -o $(BLDDIR)/vadd.hw_emu.xo                      \
-	$(SRCDIR)/krnl_vadd.cpp
+	$(SRCDIR)/krnl_vadd.cpp -g
 
 	@echo "Linking Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw_emu --platform $(PLATFORM)                       \
 	--link $(BLDDIR)/vadd.hw_emu.xo --save-temps                  \
-	-o $(BLDDIR)/vadd.hw_emu.xclbin                               \
+	-o $(BLDDIR)/vadd.hw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
 emconfig:
@@ -98,35 +98,17 @@ sw_emu_kernel: emconfig
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t sw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
-	-I $(SRCDIR) -o $(BLDDIR)/vadd.sw_emu.xo                      \
+	-I $(SRCDIR) -o $(BLDDIR)/vadd.sw_emu.xo -g                   \
 	$(SRCDIR)/krnl_vadd.cpp
 
 	@echo "Linking Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t sw_emu --platform $(PLATFORM)                       \
 	--link $(BLDDIR)/vadd.sw_emu.xo --save-temps                  \
-	-o $(BLDDIR)/vadd.sw_emu.xclbin                               \
+	-o $(BLDDIR)/vadd.sw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
-# Taken from logs of running qemu on zcu102 edge platform
-# Never boots, all CPU cores at 100%. Possibly an issue with image.ub
-# and rootfs or just a very large rootfs, not sure
-# zcu102 qemu uses ramdisk
-#
-# using the sd-card-image switch, and pointing to sd_card.img for a
-# zcu102 app, it would boot fine. Getting closer.
-#
-# Changed sd_card.manifest to point to image.ub from zcu102_base
-# edge platfrom as downloaded from Xilinx and that also worked
-# looks like sd_card.img is dynamically generated when launch_emulator
-# is run
-#
-# commended mmap in the vadd.cpp for led vio and added host to
-# sd_card.manifest and was able to run on qemu!
-#
-# probably need to add xrt.ini to get debug data
-#
-# how to see xsim waveform?
+# launch_emulator -kill $(cat emulation.pid) -t ultrascale
 run:
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t sw_emu -runtime ocl                        \
@@ -137,8 +119,3 @@ run:
 clean:
 	rm -rf $(BLDDIR)
 	mkdir -p $(BLDDIR)
-
-#| # Compile sw_emu kernel - more work needed here to get to work - Qemu
-#| # ags error during link
-#| # ERROR: [v++ 60-929] The specified platform does not support Hardware Emulation (Qemu Arguments missing)
-#| v++ -t sw_emu --platform ultra96v2_min2 -c -k krnl_vadd -I src/ -o vadd.sw_emu.xo ../src/krnl_vadd.cpp
