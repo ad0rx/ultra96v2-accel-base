@@ -10,6 +10,7 @@ GPP := aarch64-linux-gnu-g++
 SRCDIR  := $(G_SRC_DIR)
 BLDDIR  := $(G_BUILD_DIR)/vitis
 SYSROOT := $(G_SYSROOTS_DIR)
+ZCU102_SD_CARD_IMG := $(G_ZCU102_SD_CARD_IMG)
 
 # Collateral
 HOSTSRCS := $(SRCDIR)/vadd.cpp
@@ -109,8 +110,14 @@ sw_emu_kernel: emconfig
 	-o $(BLDDIR)/vadd.sw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
+# Need to add image.ub from zcu102 edge platform to sd_card.manifest
 # launch_emulator -kill $(cat emulation.pid) -t ultrascale
+#
+# automate the copy of $PWS/support/sd_card.manifest to _vimage/emulation/
+# then dynamically generate sd_card.manifest
 run:
+	cp $(PWS)/support/qemu/sd_card.manifest \
+	   $(BLDDIR)/_vimage/emulation/
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t sw_emu -runtime ocl                        \
 	-device-family Ultrascale -pid-file emulation.pid -no-reboot  \
