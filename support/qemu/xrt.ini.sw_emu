@@ -1,0 +1,12 @@
+[runtime]
+runtime_log=console
+verbosity=3
+
+[debug]
+profile=true
+timeline_trace=true
+data_transfer_trace=fine
+app_debug=true
+
+[emulation]
+launch_waveform=gui
