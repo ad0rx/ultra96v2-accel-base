@@ -45,20 +45,20 @@ help :
 # \ is used to join lines in the recipe because each line would
 # otherwise be a separate shell process and therefore F would
 # not be accessible to GPP command.
-%.o:
+$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
 	@echo "Building: $@"
 	$(eval F = $(patsubst $(BLDDIR)/%.o,$(SRCDIR)/%.cpp,$@))    \
 	$(GPP) -I $(SYSROOT)/usr/include/xrt                          \
 	       -I /opt/Xilinx/Vivado/2019.2/include                   \
-	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
+       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -o $@ $(F)             \
 
-#$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
-#	@echo "Building: $@"
-#	$(GPP) -I $(SYSROOT)/usr/include/xrt                          \
-#	       -I /opt/Xilinx/Vivado/2019.2/include                   \
-#	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
-#	       -std=c++14 --sysroot=$(SYSROOT) -o $@ $(SRCDIR)/vadd.cpp \
+$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp
+	@echo "Building: $@"
+	g++ -I $(XILINX_XRT)/include                                  \
+	-I $(XILINX_VIVADO)/include                                   \
+	-std=c++11 -c -g -o $@                                        \
+	$(SRCDIR)/vadd.cpp
 
 host:  $(HOSTOBJS)
 	@echo "Linking host"
@@ -66,6 +66,14 @@ host:  $(HOSTOBJS)
 	$(GPP) -o $(BLDDIR)/$@ $(BLDDIR)/vadd.o -lxilinxopencl        \
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
+
+host_x86:  $(BLDDIR)/vadd_x86.o
+	@echo "Linking host"
+	cd $(BLDDIR);                                                 \
+	g++ -o $(BLDDIR)/$@ $(BLDDIR)/vadd_x86.o -lOpenCL             \
+	-lpthread -lrt -lstdc++ -g                                    \
+	-L $(XILINX_XRT)/lib
+
 
 hw_kernel:
 	@echo "Building Kernel"
@@ -132,7 +140,6 @@ run:
 	-device-family Ultrascale -pid-file $(EMULATION_PID_FILE)     \
 	-no-reboot -forward-port 1440 1534
 
-# This still needs work
 stop:
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t ultrascale -kill $(EMULATION_PID)
