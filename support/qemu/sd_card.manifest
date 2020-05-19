@@ -4,7 +4,7 @@
 /mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis-platform-project/ultra96v2-accel-base/export/ultra96v2-accel-base/sw/ultra96v2-accel-base/linux_domain/image/zynqmp_fsbl.elf
 /mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis-platform-project/ultra96v2-accel-base/export/ultra96v2-accel-base/sw/ultra96v2-accel-base/linux_domain/image/linux.bif
 /mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis-platform-project/ultra96v2-accel-base/export/ultra96v2-accel-base/sw/ultra96v2-accel-base/linux_domain/image/u-boot.elf
-/mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis/vadd.hw_emu.xclbin
+/mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis/vadd.sw_emu.xclbin
 /mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis/host
 /mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis-platform-project/ultra96v2-accel-base/export/ultra96v2-accel-base/sw/ultra96v2-accel-base/boot/generic.readme
 /mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/vitis/_vimage/emulation/init.sh
