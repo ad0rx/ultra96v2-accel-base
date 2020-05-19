@@ -5,13 +5,25 @@ Simple project to allow developing accelerated applications on
 Ultra96v2 using Vitis Acceleration and PetaLinux.
 
 : Todos
-: vadd to test vio access with accelerator
-: sstate build
+: sstate petalinux build
 : rebuild from vivado all the way through platform
-: test vadd with new hardware
 : qemu boot
 : qemu dev tree
 : check that lab4 training document for sd card manifest file mods required
+: makefile dependency vadd.cpp for vadd.o
+: pull make targets from zcu102_pl_ddr reference design
+: add streaming example to pl
+: debug host app with GDB in Qemu?
+: kernel waveform from hw_emu
+: dynamically create sd_card.manifest
+: add xrt.ini examples for each flow to project
+: try X86 GDB debug ch20 ug1393 see if that resolves dltmp issue - nope
+:  keep in mind three terminal window flow, not simple gdb
+:  seems to be a python 2.7 dependency issue
+:  installed python2.7-dev to get libpython2.7.so
+:  that fixed xgdb startup issues, but still can't debug
+:  x86 sysroots issue??
+
 
 * Environment
 
@@ -72,3 +84,59 @@ Ultra96v2 using Vitis Acceleration and PetaLinux.
 : sense. For the host application, it seems reasonable, but for the
 : kernels not so much. Well, I guess it's not that bad. Could make the
 : entire project Makefile based or cmake based...
+* Qemu
+
+notes from the Makefile playing with qemu
+
+# see ug1169
+# Taken from logs of running qemu on zcu102 edge platform
+# Never boots, all CPU cores at 100%. Possibly an issue with image.ub
+# and rootfs or just a very large rootfs, not sure
+# zcu102 qemu uses ramdisk
+#
+# using the sd-card-image switch, and pointing to sd_card.img for a
+# zcu102 app, it would boot fine. Getting closer.
+#
+# Changed sd_card.manifest to point to image.ub from zcu102_base
+# edge platfrom as downloaded from Xilinx and that also worked
+# looks like sd_card.img is dynamically generated when launch_emulator
+# is run
+#
+# probably need to add xrt.ini to get debug data
+#
+# how to see xsim waveform?
+#
+# look into how sd_card.img is generated, may be able to add
+# u96 rootfs somehow. Would make a large file for qemu to load though
+#
+# fix qemu_args.txt and pmu_args files - paths are wrong, but not
+# sure it matters
+
+
+
+
+
+* sd_card image
+
+try to generate a custom sd card image (img) so that I can create a sd
+partition layout that matched u96 petalinux kernel boot args and loads
+rootfs from partition 2
+
+the zcu102 image loads pretty fast and is only 512MB, so I think there
+is a correlation with image size and qemu boot time. Could be
+worthwhile to generate a very small image. Of course, that's what the
+zcu102 image already is, so let's just use that and move on
+
+
+* X86
+instructions for compiling and linking are on the online docs
+https://www.xilinx.com/html_docs/xilinx2019_2/vitis_doc/Chunk62438775.html#esv1560357060167
+need to set XILINX_XRT=$SYSROOT/usr
+XCL_EMULATION_MODE=sw_emu
+can run host on x86 but core dumps
+
+reason why cant run on x86 seems to come down to dltmp being compiled
+for aarch64
+* hw_emu
+
+issue with undefined symbol remoteport_tlm in libspi.so
