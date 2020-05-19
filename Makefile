@@ -116,8 +116,10 @@ sw_emu_kernel: emconfig
 # automate the copy of $PWS/support/sd_card.manifest to _vimage/emulation/
 # then dynamically generate sd_card.manifest
 run:
-	cp $(PWS)/support/qemu/sd_card.manifest \
+	cp $(PWS)/support/qemu/sd_card.manifest                       \
 	   $(BLDDIR)/_vimage/emulation/
+	cp $(PWS)/support/qemu/xrt.ini.sw_emu                         \
+	   $(BLDDIR)/xrt.ini
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t sw_emu -runtime ocl                        \
 	-device-family Ultrascale -pid-file emulation.pid -no-reboot  \
