@@ -16,6 +16,9 @@ ZCU102_SD_CARD_IMG := $(G_ZCU102_SD_CARD_IMG)
 HOSTSRCS := $(SRCDIR)/vadd.cpp
 HOSTOBJS := $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/%.o,$(HOSTSRCS))
 
+EMULATION_PID_FILE := $(BLDDIR)/emulation.pid
+EMULATION_PID      := $(shell cat $(EMULATION_PID_FILE))
+
 .PHONY : help
 help :
 	@clear
@@ -122,8 +125,13 @@ run:
 	   $(BLDDIR)/xrt.ini
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t sw_emu -runtime ocl                        \
-	-device-family Ultrascale -pid-file emulation.pid -no-reboot  \
-	-forward-port 1440 1534
+	-device-family Ultrascale -pid-file $(EMULATION_PID_FILE)     \
+	-no-reboot -forward-port 1440 1534
+
+# This still needs work
+stop:
+	cd $(BLDDIR);                                                 \
+	launch_emulator -t ultrascale -kill $(EMULATION_PID)
 
 .PHONY: clean
 clean:
