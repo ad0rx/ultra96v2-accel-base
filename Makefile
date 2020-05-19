@@ -73,8 +73,10 @@ hw_kernel:
 	-o $(BLDDIR)/vadd.hw.xclbin -g                                \
 	--config $(SRCDIR)/design.cfg                                 \
 
-# Need to add emconfig step
-hw_emu_kernel:
+# Currently fails when launching Qemu do to missing symbol
+# remoteport_tlm in libdpi.so
+# could be LD_LIBRARY_PATH issue
+hw_emu_kernel: emconfig
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
@@ -93,7 +95,6 @@ emconfig:
 	cd $(BLDDIR);                                                 \
 	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
 
-# Need to add emconfig step
 sw_emu_kernel: emconfig
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
