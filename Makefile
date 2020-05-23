@@ -17,7 +17,11 @@ HOSTSRCS := $(SRCDIR)/vadd.cpp
 HOSTOBJS := $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/%.o,$(HOSTSRCS))
 
 EMULATION_PID_FILE := $(BLDDIR)/emulation.pid
-EMULATION_PID      := $(shell cat $(EMULATION_PID_FILE))
+ifneq ("$(wildcard $(EMULATION_PID_FILE))","")
+  EMULATION_PID := $(shell cat $(EMULATION_PID_FILE))
+else
+  EMULATION_PID := "NOTRUNNING"
+endif
 
 .PHONY : help
 help :
@@ -41,11 +45,17 @@ help :
 	@echo "HOSTSRCS: $(HOSTSRCS)"
 	@echo "HOSTOBJS: $(HOSTOBJS)"
 
+
+# Project level targets
+.PHONY: $(BLDDIR)
+$(BLDDIR):
+	mkdir -p $@
+
 # TODO fix cpp and h depends
 # \ is used to join lines in the recipe because each line would
 # otherwise be a separate shell process and therefore F would
 # not be accessible to GPP command.
-$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
+$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(BLDDIR)
 	@echo "Building: $@"
 	$(eval F = $(patsubst $(BLDDIR)/%.o,$(SRCDIR)/%.cpp,$@))    \
 	$(GPP) -I $(SYSROOT)/usr/include/xrt                          \
@@ -53,7 +63,7 @@ $(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
        -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -o $@ $(F)             \
 
-$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp
+$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp $(BLDDIR)
 	@echo "Building: $@"
 	g++ -I $(XILINX_XRT)/include                                  \
 	-I $(XILINX_VIVADO)/include                                   \
@@ -75,7 +85,7 @@ host_x86:  $(BLDDIR)/vadd_x86.o
 	-L $(XILINX_XRT)/lib
 
 
-hw_kernel:
+hw_kernel: $(BLDDIR)
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw --platform $(PLATFORM) -c -k krnl_vadd           \
@@ -92,7 +102,7 @@ hw_kernel:
 # Currently fails when launching Qemu do to missing symbol
 # remoteport_tlm in libdpi.so
 # could be LD_LIBRARY_PATH issue
-hw_emu_kernel: emconfig
+hw_emu_kernel: emconfig $(BLDDIR)
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
@@ -106,12 +116,12 @@ hw_emu_kernel: emconfig
 	-o $(BLDDIR)/vadd.hw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
-emconfig:
+emconfig: $(BLDDIR)
 	@echo "Building emconfig.json"
 	cd $(BLDDIR);                                                 \
 	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
 
-sw_emu_kernel: emconfig
+sw_emu_kernel: emconfig $(BLDDIR)
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t sw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
@@ -143,8 +153,9 @@ run:
 stop:
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t ultrascale -kill $(EMULATION_PID)
+	rm -rf $(EMULATION_PID_FILE)
 
 .PHONY: clean
 clean:
 	rm -rf $(BLDDIR)
-	mkdir -p $(BLDDIR)
+#	mkdir -p $(BLDDIR)
