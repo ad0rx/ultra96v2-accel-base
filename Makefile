@@ -60,8 +60,8 @@ $(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(BLDDIR)
 	$(eval F = $(patsubst $(BLDDIR)/%.o,$(SRCDIR)/%.cpp,$@))    \
 	$(GPP) -I $(SYSROOT)/usr/include/xrt                          \
 	       -I /opt/Xilinx/Vivado/2019.2/include                   \
-       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
-	       -std=c++14 --sysroot=$(SYSROOT) -o $@ $(F)             \
+	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
+	       -std=c++14 --sysroot=$(SYSROOT) -g -o $@ $(F)          \
 
 $(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp $(BLDDIR)
 	@echo "Building: $@"
@@ -158,4 +158,3 @@ stop:
 .PHONY: clean
 clean:
 	rm -rf $(BLDDIR)
-#	mkdir -p $(BLDDIR)
