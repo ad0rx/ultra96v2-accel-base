@@ -6,24 +6,21 @@ Ultra96v2 using Vitis Acceleration and PetaLinux.
 
 : Todos
 : sstate petalinux build
-: rebuild from vivado all the way through platform
-: qemu boot
-: qemu dev tree
 : check that lab4 training document for sd card manifest file mods required
-: makefile dependency vadd.cpp for vadd.o
 : pull make targets from zcu102_pl_ddr reference design
 : add streaming example to pl
 : debug host app with GDB in Qemu?
-: kernel waveform from hw_emu
 : dynamically create sd_card.manifest
-: add xrt.ini examples for each flow to project
 : try X86 GDB debug ch20 ug1393 see if that resolves dltmp issue - nope
 :  keep in mind three terminal window flow, not simple gdb
 :  seems to be a python 2.7 dependency issue
 :  installed python2.7-dev to get libpython2.7.so
 :  that fixed xgdb startup issues, but still can't debug
-:  x86 sysroots issue??
-
+:  x86 sysroots issue?? LD_LIBRARY_PATH?
+: sw_emu from lab4 - am I missing a ton of steps with behav models?
+:  look at sd_card tool help menu --emu_behav
+:  might need to do more with sd_card.manifest
+:
 
 * Environment
 
@@ -126,8 +123,7 @@ the zcu102 image loads pretty fast and is only 512MB, so I think there
 is a correlation with image size and qemu boot time. Could be
 worthwhile to generate a very small image. Of course, that's what the
 zcu102 image already is, so let's just use that and move on
-
-
+l
 * X86
 instructions for compiling and linking are on the online docs
 https://www.xilinx.com/html_docs/xilinx2019_2/vitis_doc/Chunk62438775.html#esv1560357060167
@@ -140,3 +136,17 @@ for aarch64
 * hw_emu
 
 issue with undefined symbol remoteport_tlm in libspi.so
+* gdb
+
+u96
+> gdbserver --multi :2000
+
+docker
+> aarch64-linux-gnu-gdb -x $PWS/support/gdb/debug-settings.gdbbuild/vitis/host
+(gdb) run /mnt/vadd.hw.xclbin
+(gdb) breakpoint hit...
+(gdb) cont
+
+watch the gdbserver window for program output
+
+(gdb) monitor exit
