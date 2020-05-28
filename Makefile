@@ -33,7 +33,7 @@ help :
 	@echo "* Targets:                                                            "
 	@echo "*   host         : the host application                               "
 	@echo "*   hw_kernel    : hardware kernels                                   "
-	@echo "*   hw_emu_kernel: hw_emu kernels                                     "
+	@echo "*   hw_emu_kernel: hw_emu kernels (not working)                       "
 	@echo "*   clean        : you know what this does                            "
 	@echo "*   run_sw_emu   : start sw emulation in qemu                         "
 	@echo "*   stop_emu     : stop emulator                                      "
@@ -47,18 +47,11 @@ help :
 	@echo "HOSTSRCS: $(HOSTSRCS)"
 	@echo "HOSTOBJS: $(HOSTOBJS)"
 
-
-# Project level targets
-#.PHONY: $(BLDDIR)
-#$(BLDDIR):
-#	@echo "Creating BLDDIR"
-#	mkdir -p $@
-
 # TODO fix cpp and h depends
 # \ is used to join lines in the recipe because each line would
 # otherwise be a separate shell process and therefore F would
 # not be accessible to GPP command.
-$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
+$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
 	@echo "Building: $@"
 	mkdir -p $(BLDDIR)
 	$(eval F = $(patsubst $(BLDDIR)/%.o,$(SRCDIR)/%.cpp,$@))    \
@@ -67,7 +60,7 @@ $(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
 	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -g -o $@ $(F)          \
 
-$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp
+$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
 	@echo "Building: $@"
 	mkdir -p $(BLDDIR)
 	g++ -I $(XILINX_XRT)/include                                  \
@@ -92,7 +85,7 @@ host_x86:  $(BLDDIR)/vadd_x86.o
 	-L $(XILINX_XRT)/lib
 
 
-hw_kernel: $(BLDDIR)
+hw_kernel:
 	@echo "Building Kernel"
 	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
