@@ -5,6 +5,9 @@ Simple project to allow developing accelerated applications on
 Ultra96v2 using Vitis Acceleration and PetaLinux.
 
 : Todos
+: fix gpio leds for hw target
+: generate sd_card manifest
+: handle zcu102 image.ub file
 : sstate petalinux build
 : check that lab4 training document for sd card manifest file mods required
 : pull make targets from zcu102_pl_ddr reference design
