@@ -67,14 +67,6 @@ $(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
 	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -g -o $@ $(F)          \
 
-$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
-	@echo "Building: $@"
-	mkdir -p $(BLDDIR)
-	g++ -I $(XILINX_XRT)/include                                  \
-	-I $(XILINX_VIVADO)/include                                   \
-	-std=c++11 -c -g -o $@                                        \
-	$(SRCDIR)/vadd.cpp
-
 $(BLDDIR)/host:  $(HOSTOBJS)
 	@echo "Linking host"
 	mkdir -p $(BLDDIR)
@@ -82,15 +74,6 @@ $(BLDDIR)/host:  $(HOSTOBJS)
 	$(GPP) -o $@ $(BLDDIR)/vadd.o -lxilinxopencl                  \
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
-
-$(BLDDIR)/host_x86:  $(BLDDIR)/vadd_x86.o
-	@echo "Linking host"
-	mkdir -p $(BLDDIR)
-	cd $(BLDDIR);                                                 \
-	g++ -o $@ $(BLDDIR)/vadd_x86.o -lOpenCL                       \
-	-lpthread -lrt -lstdc++ -g                                    \
-	-L $(XILINX_XRT)/lib
-
 
 hw_kernel:
 	@echo "Building Kernel"
