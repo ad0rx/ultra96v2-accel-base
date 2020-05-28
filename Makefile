@@ -1,3 +1,6 @@
+# To debug Makefile:
+# make <target> --debug --just-print
+
 # Project level
 PLATFORM := $(PROJ)
 
@@ -46,24 +49,27 @@ help :
 
 
 # Project level targets
-.PHONY: $(BLDDIR)
-$(BLDDIR):
-	mkdir -p $@
+#.PHONY: $(BLDDIR)
+#$(BLDDIR):
+#	@echo "Creating BLDDIR"
+#	mkdir -p $@
 
 # TODO fix cpp and h depends
 # \ is used to join lines in the recipe because each line would
 # otherwise be a separate shell process and therefore F would
 # not be accessible to GPP command.
-$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(BLDDIR)
+$(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp
 	@echo "Building: $@"
+	mkdir -p $(BLDDIR)
 	$(eval F = $(patsubst $(BLDDIR)/%.o,$(SRCDIR)/%.cpp,$@))    \
 	$(GPP) -I $(SYSROOT)/usr/include/xrt                          \
 	       -I /opt/Xilinx/Vivado/2019.2/include                   \
 	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -g -o $@ $(F)          \
 
-$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp $(BLDDIR)
+$(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp
 	@echo "Building: $@"
+	mkdir -p $(BLDDIR)
 	g++ -I $(XILINX_XRT)/include                                  \
 	-I $(XILINX_VIVADO)/include                                   \
 	-std=c++11 -c -g -o $@                                        \
@@ -71,6 +77,7 @@ $(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp $(BLDDIR)
 
 host:  $(HOSTOBJS)
 	@echo "Linking host"
+	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	$(GPP) -o $(BLDDIR)/$@ $(BLDDIR)/vadd.o -lxilinxopencl        \
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
@@ -78,6 +85,7 @@ host:  $(HOSTOBJS)
 
 host_x86:  $(BLDDIR)/vadd_x86.o
 	@echo "Linking host"
+	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	g++ -o $(BLDDIR)/$@ $(BLDDIR)/vadd_x86.o -lOpenCL             \
 	-lpthread -lrt -lstdc++ -g                                    \
@@ -86,6 +94,7 @@ host_x86:  $(BLDDIR)/vadd_x86.o
 
 hw_kernel: $(BLDDIR)
 	@echo "Building Kernel"
+	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw --platform $(PLATFORM) -c -k krnl_vadd           \
 	-I $(SRCDIR) -o $(BLDDIR)/vadd.hw.xo                          \
@@ -101,8 +110,9 @@ hw_kernel: $(BLDDIR)
 # Currently fails when launching Qemu do to missing symbol
 # remoteport_tlm in libdpi.so
 # could be LD_LIBRARY_PATH issue
-hw_emu_kernel: emconfig $(BLDDIR)
+hw_emu_kernel: $(BLDDIR)/emconfig.json
 	@echo "Building Kernel"
+	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t hw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
 	-I $(SRCDIR) -o $(BLDDIR)/vadd.hw_emu.xo                      \
@@ -115,14 +125,15 @@ hw_emu_kernel: emconfig $(BLDDIR)
 	-o $(BLDDIR)/vadd.hw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
-emconfig: $(BLDDIR)
+$(BLDDIR)/emconfig.json:
 	@echo "Building emconfig.json"
+	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
 
-#sw_emu_kernel: emconfig $(BLDDIR)
-$(BLDDIR)/vadd.sw_emu.xclbin: emconfig $(BLDDIR)
+$(BLDDIR)/vadd.sw_emu.xclbin: $(BLDDIR)/emconfig.json
 	@echo "Building Kernel"
+	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t sw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
 	-I $(SRCDIR) -o $(BLDDIR)/vadd.sw_emu.xo -g                   \
