@@ -33,8 +33,8 @@ help :
 	@echo "*   hw_emu_kernel: hw_emu kernels                                     "
 	@echo "*   sw_emu_kernel: sw_emu kernels                                     "
 	@echo "*   clean        : you know what this does                            "
-	@echo "*   run          : start sw emulation in qemu                         "
-	@echo "*   stop         : stop emulator                                      "
+	@echo "*   run_sw_emu   : start sw emulation in qemu                         "
+	@echo "*   stop_emu     : stop emulator                                      "
 	@echo "*                                                                     "
 	@echo "*                                                                     "
 	@echo "*                                                                     "
@@ -140,7 +140,7 @@ sw_emu_kernel: emconfig $(BLDDIR)
 #
 # automate the copy of $PWS/support/sd_card.manifest to _vimage/emulation/
 # then dynamically generate sd_card.manifest
-run:
+run_sw_emu:
 	cp $(PWS)/support/qemu/sd_card.manifest                       \
 	   $(BLDDIR)/_vimage/emulation/
 	cp $(PWS)/support/qemu/xrt.ini.sw_emu                         \
@@ -150,7 +150,7 @@ run:
 	-device-family Ultrascale -pid-file $(EMULATION_PID_FILE)     \
 	-no-reboot -forward-port 1440 1534
 
-stop:
+stop_emu:
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t ultrascale -kill $(EMULATION_PID)
 	rm -rf $(EMULATION_PID_FILE)
