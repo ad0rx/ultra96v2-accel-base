@@ -6,3 +6,4 @@ set sysroot /mnt/projects/avnet/2019.2/ultra96v2-accel-base/build/sysroots/aarch
 set remote exec-file /mnt/host
 set environment XILINX_XRT /usr
 b main
+run /mnt/vadd.hw.xclbin
