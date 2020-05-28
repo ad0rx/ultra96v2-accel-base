@@ -26,6 +26,13 @@ else
   EMULATION_PID := "NOTRUNNING"
 endif
 
+XTERM_PID_FILE := $(BLDDIR)/xterm.pid
+ifneq ("$(wildcard $(XTERM_PID_FILE))","")
+  XTERM_PID := $(shell cat $(XTERM_PID_FILE))
+else
+  XTERM_PID := "NOTRUNNING"
+endif
+
 .PHONY : help
 help :
 	@clear
@@ -170,13 +177,18 @@ stop_emu:
 deploy:
 	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
 
-.PHONY: gdbserver
-gdbserver:
-	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' &
+$(XTERM_PID_FILE):
+	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' & \
+	echo $$! > $(BLDDIR)/xterm.pid
 
 .PHONY: run_hw
-run_hw:
+run_hw: $(XTERM_PID_FILE)
 	aarch64-linux-gnu-gdb -x $(PWS)/support/gdb/debug-settings.gdb $(BLDDIR)/host
+
+.PHONY: stop_hw
+stop_hw:
+	kill $(XTERM_PID)
+	rm -rf $(XTERM_PID_FILE)
 
 .PHONY: clean
 clean:
