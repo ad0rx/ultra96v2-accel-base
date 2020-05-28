@@ -31,11 +31,10 @@ help :
 	@echo "*   host         : the host application                               "
 	@echo "*   hw_kernel    : hardware kernels                                   "
 	@echo "*   hw_emu_kernel: hw_emu kernels                                     "
-	@echo "*   sw_emu_kernel: sw_emu kernels                                     "
 	@echo "*   clean        : you know what this does                            "
 	@echo "*   run_sw_emu   : start sw emulation in qemu                         "
 	@echo "*   stop_emu     : stop emulator                                      "
-	@echo "*                                                                     "
+	@echo "*   run_hw       : run on hardware                                    "
 	@echo "*                                                                     "
 	@echo "*                                                                     "
 	@echo "**********************************************************************"
@@ -121,7 +120,8 @@ emconfig: $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
 
-sw_emu_kernel: emconfig $(BLDDIR)
+#sw_emu_kernel: emconfig $(BLDDIR)
+$(BLDDIR)/vadd.sw_emu.xclbin: emconfig $(BLDDIR)
 	@echo "Building Kernel"
 	cd $(BLDDIR);                                                 \
 	$(VPP) -t sw_emu --platform $(PLATFORM) -c -k krnl_vadd       \
@@ -140,7 +140,7 @@ sw_emu_kernel: emconfig $(BLDDIR)
 #
 # automate the copy of $PWS/support/sd_card.manifest to _vimage/emulation/
 # then dynamically generate sd_card.manifest
-run_sw_emu:
+run_sw_emu: $(BLDDIR)/vadd.sw_emu.xclbin
 	cp $(PWS)/support/qemu/sd_card.manifest                       \
 	   $(BLDDIR)/_vimage/emulation/
 	cp $(PWS)/support/qemu/xrt.ini.sw_emu                         \
@@ -154,6 +154,16 @@ stop_emu:
 	cd $(BLDDIR);                                                 \
 	launch_emulator -t ultrascale -kill $(EMULATION_PID)
 	rm -rf $(EMULATION_PID_FILE)
+
+
+# Download the newest build of host app and xclbin to target
+# start gdbserver on target
+# start gdb client on dev host and connect to the target
+# todo
+# xrt.ini
+.PHONY: run_hw
+run_hw:
+	@echo "not yet implemented"
 
 .PHONY: clean
 clean:
