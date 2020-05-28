@@ -53,8 +53,8 @@ ALL TIMES.
 #include <fcntl.h>
 #include <unistd.h>
 #include "sys/mman.h"
-#define GPIO_ADDRESS 0x800100
-#define GPIO_VALUE   0x555555
+#define GPIO_ADDRESS 0x80010000u
+#define GPIO_VALUE   0x55555555u
 
   static const int DATA_SIZE = 4096;
 
