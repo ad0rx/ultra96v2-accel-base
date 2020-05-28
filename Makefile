@@ -37,8 +37,8 @@ help :
 	@echo "*   clean        : you know what this does                            "
 	@echo "*   run_sw_emu   : start sw emulation in qemu                         "
 	@echo "*   stop_emu     : stop emulator                                      "
-	@echo "*   run_hw       : run on hardware                                    "
-	@echo "*                                                                     "
+	@echo "*   run_hw       : run app on hardware                                "
+	@echo "*   deploy       : copy host and xclbin to target                     "
 	@echo "*                                                                     "
 	@echo "**********************************************************************"
 	@echo "SRCDIR  : $(SRCDIR)"
@@ -159,15 +159,21 @@ stop_emu:
 	launch_emulator -t ultrascale -kill $(EMULATION_PID)
 	rm -rf $(EMULATION_PID_FILE)
 
-
 # Download the newest build of host app and xclbin to target
 # start gdbserver on target
 # start gdb client on dev host and connect to the target
 # todo
 # xrt.ini
+# ssh-keygen
+# ssh-copy-id
+.PHONY: deploy
+deploy:
+	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
+
 .PHONY: run_hw
 run_hw:
-	@echo "not yet implemented"
+	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' &
+	aarch64-linux-gnu-gdb -x $(PWS)/support/gdb/debug-settings.gdb $(BLDDIR)/host
 
 .PHONY: clean
 clean:
