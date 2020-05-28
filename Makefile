@@ -68,19 +68,19 @@ $(BLDDIR)/vadd_x86.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
 	-std=c++11 -c -g -o $@                                        \
 	$(SRCDIR)/vadd.cpp
 
-host:  $(HOSTOBJS)
+$(BLDDIR)/host:  $(HOSTOBJS)
 	@echo "Linking host"
 	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
-	$(GPP) -o $(BLDDIR)/$@ $(BLDDIR)/vadd.o -lxilinxopencl        \
+	$(GPP) -o $@ $(BLDDIR)/vadd.o -lxilinxopencl                  \
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
 
-host_x86:  $(BLDDIR)/vadd_x86.o
+$(BLDDIR)/host_x86:  $(BLDDIR)/vadd_x86.o
 	@echo "Linking host"
 	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
-	g++ -o $(BLDDIR)/$@ $(BLDDIR)/vadd_x86.o -lOpenCL             \
+	g++ -o $@ $(BLDDIR)/vadd_x86.o -lOpenCL                       \
 	-lpthread -lrt -lstdc++ -g                                    \
 	-L $(XILINX_XRT)/lib
 
@@ -144,7 +144,7 @@ $(BLDDIR)/vadd.sw_emu.xclbin: $(BLDDIR)/emconfig.json
 #
 # automate the copy of $PWS/support/sd_card.manifest to _vimage/emulation/
 # then dynamically generate sd_card.manifest
-run_sw_emu: $(BLDDIR)/vadd.sw_emu.xclbin
+run_sw_emu: $(BLDDIR)/vadd.sw_emu.xclbin $(BLDDIR)/host
 	cp $(PWS)/support/qemu/sd_card.manifest                       \
 	   $(BLDDIR)/_vimage/emulation/
 	cp $(PWS)/support/qemu/xrt.ini.sw_emu                         \
