@@ -170,9 +170,12 @@ stop_emu:
 deploy:
 	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
 
+.PHONY: gdbserver
+gdbserver:
+	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' &
+
 .PHONY: run_hw
 run_hw:
-	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' &
 	aarch64-linux-gnu-gdb -x $(PWS)/support/gdb/debug-settings.gdb $(BLDDIR)/host
 
 .PHONY: clean
