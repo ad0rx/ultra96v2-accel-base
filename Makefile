@@ -163,7 +163,8 @@ stop_emu:
 # xrt.ini
 # ssh-keygen
 # ssh-copy-id
-#.PHONY: deploy
+.PHONY: deploy
+deploy: $(DEPLOY_TIMESTAMP_FILE)
 $(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
 	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
 	touch $(DEPLOY_TIMESTAMP_FILE)
