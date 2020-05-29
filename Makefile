@@ -188,7 +188,7 @@ $(XTERM_PID_FILE):
 	echo $$! > $(BLDDIR)/xterm.pid
 
 .PHONY: run_hw
-run_hw: host hw_kernel deploy xterm
+run_hw: $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin $(DEPLOY_TIMESTAMP_FILE) $(XTERM_PID_FILE)
 	aarch64-linux-gnu-gdb -x $(PWS)/support/gdb/debug-settings.gdb $(BLDDIR)/host
 
 # The '-' means ignore exit status of kill command because
