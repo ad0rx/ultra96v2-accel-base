@@ -74,6 +74,8 @@ $(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
 	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -g -o $@ $(F)          \
 
+.PHONY: host
+host: $(BLDDIR)/host
 $(BLDDIR)/host:  $(HOSTOBJS)
 	@echo "Linking host"
 	mkdir -p $(BLDDIR)
@@ -82,7 +84,9 @@ $(BLDDIR)/host:  $(HOSTOBJS)
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
 
-hw_kernel:
+.PHONY: hw_kernel
+hw_kernel: $(BLDDIR)/vadd.hw.xclbin
+$(BLDDIR)/vadd.hw.xclbin: $(SRCDIR)/krnl_vadd.cpp $(SRCDIR)/vadd.h
 	@echo "Building Kernel"
 	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
