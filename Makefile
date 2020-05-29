@@ -76,7 +76,7 @@ $(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
 	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -g -o $@ $(F)          \
 
-.PHONY: host
+#.PHONY: host
 host: $(BLDDIR)/host
 $(BLDDIR)/host:  $(HOSTOBJS)
 	@echo "Linking host"
@@ -86,7 +86,7 @@ $(BLDDIR)/host:  $(HOSTOBJS)
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
 
-.PHONY: hw_kernel
+#.PHONY: hw_kernel
 hw_kernel: $(BLDDIR)/vadd.hw.xclbin
 $(BLDDIR)/vadd.hw.xclbin: $(SRCDIR)/krnl_vadd.cpp $(SRCDIR)/vadd.h
 	@echo "Building Kernel"
@@ -121,7 +121,7 @@ hw_emu_kernel: $(BLDDIR)/emconfig.json
 	-o $(BLDDIR)/vadd.hw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
-.PHONY: emconfig
+#.PHONY: emconfig
 emconfig: $(BLDDIR)/emconfig.json
 $(BLDDIR)/emconfig.json:
 	@echo "Building emconfig.json"
@@ -129,7 +129,7 @@ $(BLDDIR)/emconfig.json:
 	cd $(BLDDIR);                                                 \
 	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
 
-.PHONY: sw_emu
+#.PHONY: sw_emu
 sw_emu: $(BLDDIR)/vadd.sw_emu.xclbin
 $(BLDDIR)/vadd.sw_emu.xclbin: emconfig
 	@echo "Building Kernel"
@@ -173,22 +173,22 @@ stop_emu:
 # xrt.ini
 # ssh-keygen
 # ssh-copy-id
-.PHONY: deploy
+#.PHONY: deploy
 deploy: $(DEPLOY_TIMESTAMP_FILE)
-$(DEPLOY_TIMESTAMP_FILE): host hw_kernel
+$(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
 	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
 	touch $(DEPLOY_TIMESTAMP_FILE)
 
 # Start a xterm session in a separate window and in that window, ssh into the target
 # and start the gdbserver
-.PHONY: xterm
+#.PHONY: xterm
 xterm: $(XTERM_PID_FILE)
 $(XTERM_PID_FILE):
 	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' & \
 	echo $$! > $(BLDDIR)/xterm.pid
 
 .PHONY: run_hw
-run_hw: host hw_kernel xterm deploy
+run_hw: host hw_kernel deploy xterm
 	aarch64-linux-gnu-gdb -x $(PWS)/support/gdb/debug-settings.gdb $(BLDDIR)/host
 
 # The '-' means ignore exit status of kill command because
@@ -197,6 +197,11 @@ run_hw: host hw_kernel xterm deploy
 stop_hw:
 	- kill $(XTERM_PID)
 	rm -rf $(XTERM_PID_FILE)
+
+.PHONY: halt
+halt:
+	@echo "Halting Target"
+	ssh root@192.168.0.73 /sbin/shutdown -h -t 1 now
 
 .PHONY: clean
 clean:
