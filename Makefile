@@ -33,6 +33,13 @@ else
   XTERM_PID := "NOTRUNNING"
 endif
 
+DEPLOY_TIMESTAMP_FILE := $(BLDDIR)/deploy.timestamp
+ifneq ("$(wildcard $(DEPLOY_TIMESTAMP_FILE))","")
+  DEPLOY_TIMESTAMP := $(shell cat $(DEPLOY_TIMESTAMP_FILE))
+else
+  DEPLOY_TIMESTAMP := "UNAVAILABLE"
+endif
+
 .PHONY : help
 help :
 	@clear
@@ -156,21 +163,26 @@ stop_emu:
 # xrt.ini
 # ssh-keygen
 # ssh-copy-id
-.PHONY: deploy
-deploy:
+#.PHONY: deploy
+$(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
 	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
+	touch $(DEPLOY_TIMESTAMP_FILE)
 
+# Start a xterm session in a separate window and in that window, ssh into the target
+# and start the gdbserver
 $(XTERM_PID_FILE):
 	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' & \
 	echo $$! > $(BLDDIR)/xterm.pid
 
 .PHONY: run_hw
-run_hw: $(XTERM_PID_FILE)
+run_hw: $(XTERM_PID_FILE) $(DEPLOY_TIMESTAMP_FILE)
 	aarch64-linux-gnu-gdb -x $(PWS)/support/gdb/debug-settings.gdb $(BLDDIR)/host
 
+# The '-' means ignore exit status of kill command because
+# we want to delete the pid file in every case
 .PHONY: stop_hw
 stop_hw:
-	kill $(XTERM_PID)
+	- kill $(XTERM_PID)
 	rm -rf $(XTERM_PID_FILE)
 
 .PHONY: clean
