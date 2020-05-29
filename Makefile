@@ -53,7 +53,7 @@ help :
 	@echo "*   stop_emu     : stop emulator                                      "
 	@echo "*   run_hw       : run app on hardware                                "
 	@echo "*   deploy       : copy host and xclbin to target                     "
-	@echo "*   stop_hw      : kill the xterm session for debugging, gdbserver    "
+	@echo "*   stop_hw      : kill the xterm session for debugging               "
 	@echo "**********************************************************************"
 	@echo "SRCDIR  : $(SRCDIR)"
 	@echo "BLDDIR  : $(BLDDIR)"
