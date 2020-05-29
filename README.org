@@ -5,6 +5,13 @@ Simple project to allow developing accelerated applications on
 Ultra96v2 using Vitis Acceleration and PetaLinux.
 
 : Todos
+: abstract target IP address
+: gdb for sw_emu
+:  tried following chapter 20 UG1393
+:  host program is compiled for ARM, but trying to run on X86
+:  how do you do this with QEMU?
+:  seems like I got further when compiled for X86 -> dltmp issue
+:  maybe some clues in lab4
 : fix gpio leds for hw target
 : generate sd_card manifest
 : handle zcu102 image.ub file
