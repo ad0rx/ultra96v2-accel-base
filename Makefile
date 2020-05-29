@@ -76,7 +76,6 @@ $(BLDDIR)/vadd.o: $(SRCDIR)/vadd.cpp $(SRCDIR)/vadd.h
 	       -I $(SYSROOT)/usr/include -c -fmessage-length=0        \
 	       -std=c++14 --sysroot=$(SYSROOT) -g -o $@ $(F)          \
 
-#.PHONY: host
 host: $(BLDDIR)/host
 $(BLDDIR)/host:  $(HOSTOBJS)
 	@echo "Linking host"
@@ -86,7 +85,6 @@ $(BLDDIR)/host:  $(HOSTOBJS)
 	-lpthread -lrt -lstdc++ -lgmp -lxrt_core -g                   \
 	-L $(SYSROOT)/usr/lib --sysroot=$(SYSROOT)
 
-#.PHONY: hw_kernel
 hw_kernel: $(BLDDIR)/vadd.hw.xclbin
 $(BLDDIR)/vadd.hw.xclbin: $(SRCDIR)/krnl_vadd.cpp $(SRCDIR)/vadd.h
 	@echo "Building Kernel"
@@ -121,7 +119,6 @@ hw_emu_kernel: $(BLDDIR)/emconfig.json
 	-o $(BLDDIR)/vadd.hw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
-#.PHONY: emconfig
 emconfig: $(BLDDIR)/emconfig.json
 $(BLDDIR)/emconfig.json:
 	@echo "Building emconfig.json"
@@ -129,7 +126,6 @@ $(BLDDIR)/emconfig.json:
 	cd $(BLDDIR);                                                 \
 	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
 
-#.PHONY: sw_emu
 sw_emu: $(BLDDIR)/vadd.sw_emu.xclbin
 $(BLDDIR)/vadd.sw_emu.xclbin: $(BLDDIR)/emconfig.json
 	@echo "Building Kernel"
@@ -173,7 +169,6 @@ stop_emu:
 # xrt.ini
 # ssh-keygen
 # ssh-copy-id
-#.PHONY: deploy
 deploy: $(DEPLOY_TIMESTAMP_FILE)
 $(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
 	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
@@ -181,7 +176,6 @@ $(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
 
 # Start a xterm session in a separate window and in that window, ssh into the target
 # and start the gdbserver
-#.PHONY: xterm
 xterm: $(XTERM_PID_FILE)
 $(XTERM_PID_FILE):
 	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' & \
