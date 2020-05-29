@@ -175,12 +175,14 @@ $(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
 
 # Start a xterm session in a separate window and in that window, ssh into the target
 # and start the gdbserver
+.PHONY: xterm
+xterm: $(XTERM_PID_FILE)
 $(XTERM_PID_FILE):
 	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' & \
 	echo $$! > $(BLDDIR)/xterm.pid
 
 .PHONY: run_hw
-run_hw: $(XTERM_PID_FILE) $(DEPLOY_TIMESTAMP_FILE)
+run_hw: host hw_kernel xterm deploy
 	aarch64-linux-gnu-gdb -x $(PWS)/support/gdb/debug-settings.gdb $(BLDDIR)/host
 
 # The '-' means ignore exit status of kill command because
