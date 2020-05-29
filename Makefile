@@ -131,7 +131,7 @@ $(BLDDIR)/emconfig.json:
 
 #.PHONY: sw_emu
 sw_emu: $(BLDDIR)/vadd.sw_emu.xclbin
-$(BLDDIR)/vadd.sw_emu.xclbin: emconfig
+$(BLDDIR)/vadd.sw_emu.xclbin: $(BLDDIR)/emconfig.json
 	@echo "Building Kernel"
 	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
@@ -151,7 +151,7 @@ $(BLDDIR)/vadd.sw_emu.xclbin: emconfig
 #
 # automate the copy of $PWS/support/sd_card.manifest to _vimage/emulation/
 # then dynamically generate sd_card.manifest
-run_sw_emu: sw_emu host
+run_sw_emu: $(BLDDIR)/vadd.sw_emu.xclbin $(BLDDIR)/host
 	cp $(PWS)/support/qemu/sd_card.manifest                       \
 	   $(BLDDIR)/_vimage/emulation/
 	cp $(PWS)/support/qemu/xrt.ini.sw_emu                         \
@@ -185,7 +185,7 @@ $(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
 xterm: $(XTERM_PID_FILE)
 $(XTERM_PID_FILE):
 	xterm -e /bin/bash -l -c 'ssh root@192.168.0.73 -t gdbserver --multi :2000' & \
-	echo $$! > $(BLDDIR)/xterm.pid
+	echo $$! > $(XTERM_PID_FILE)
 
 .PHONY: run_hw
 run_hw: $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin $(DEPLOY_TIMESTAMP_FILE) $(XTERM_PID_FILE)
