@@ -64,7 +64,6 @@ help :
 	@echo "XTERM_PID       : $(XTERM_PID)"
 	@echo "EMULATION_PID   : $(EMULATION_PID)"
 
-# TODO fix cpp and h depends
 # \ is used to join lines in the recipe because each line would
 # otherwise be a separate shell process and therefore F would
 # not be accessible to GPP command.
@@ -122,13 +121,15 @@ hw_emu_kernel: $(BLDDIR)/emconfig.json
 	-o $(BLDDIR)/vadd.hw_emu.xclbin -g                            \
 	--config $(SRCDIR)/design.cfg
 
+.PHONY: emconfig
+emconfig: $(BLDDIR)/emconfig.json
 $(BLDDIR)/emconfig.json:
 	@echo "Building emconfig.json"
 	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
 	emconfigutil --nd 1 --platform $(PLATFORM) --od $(BLDDIR)
 
-$(BLDDIR)/vadd.sw_emu.xclbin: $(BLDDIR)/emconfig.json
+$(BLDDIR)/vadd.sw_emu.xclbin: emconfig
 	@echo "Building Kernel"
 	mkdir -p $(BLDDIR)
 	cd $(BLDDIR);                                                 \
