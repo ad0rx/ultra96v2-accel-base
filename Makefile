@@ -35,7 +35,7 @@ endif
 
 DEPLOY_TIMESTAMP_FILE := $(BLDDIR)/deploy.timestamp
 ifneq ("$(wildcard $(DEPLOY_TIMESTAMP_FILE))","")
-  DEPLOY_TIMESTAMP := $(shell cat $(DEPLOY_TIMESTAMP_FILE))
+  DEPLOY_TIMESTAMP := $(shell stat $(DEPLOY_TIMESTAMP_FILE))
 else
   DEPLOY_TIMESTAMP := "UNAVAILABLE"
 endif
@@ -60,6 +60,9 @@ help :
 	@echo "SYSROOT : $(SYSROOT)"
 	@echo "HOSTSRCS: $(HOSTSRCS)"
 	@echo "HOSTOBJS: $(HOSTOBJS)"
+	@echo "DEPLOY_TIMESTAMP: $(DEPLOY_TIMESTAMP)"
+	@echo "XTERM_PID       : $(XTERM_PID)"
+	@echo "EMULATION_PID   : $(EMULATION_PID)"
 
 # TODO fix cpp and h depends
 # \ is used to join lines in the recipe because each line would
