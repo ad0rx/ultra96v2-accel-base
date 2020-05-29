@@ -175,7 +175,7 @@ stop_emu:
 # ssh-copy-id
 .PHONY: deploy
 deploy: $(DEPLOY_TIMESTAMP_FILE)
-$(DEPLOY_TIMESTAMP_FILE): $(BLDDIR)/host $(BLDDIR)/vadd.hw.xclbin
+$(DEPLOY_TIMESTAMP_FILE): host hw_kernel
 	scp $(BLDDIR)/vadd.hw.xclbin $(BLDDIR)/host root@192.168.0.73:/mnt
 	touch $(DEPLOY_TIMESTAMP_FILE)
 
