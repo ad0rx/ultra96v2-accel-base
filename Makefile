@@ -151,7 +151,7 @@ $(BLDDIR)/vadd.sw_emu.xclbin: emconfig
 #
 # automate the copy of $PWS/support/sd_card.manifest to _vimage/emulation/
 # then dynamically generate sd_card.manifest
-run_sw_emu: sw_emu $(BLDDIR)/host
+run_sw_emu: sw_emu host
 	cp $(PWS)/support/qemu/sd_card.manifest                       \
 	   $(BLDDIR)/_vimage/emulation/
 	cp $(PWS)/support/qemu/xrt.ini.sw_emu                         \
