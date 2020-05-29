@@ -5,3 +5,4 @@ gen-petalinux-project.sh
 gen-vitis-platform.sh
 make host
 make hw_kernel
+make sw_emu
